@@ -70,19 +70,26 @@ class LoginFragment : Fragment() {
             val password = editTextPassword.text.toString()
 
             if (email.isEmpty()) {
+
                 Toast.makeText(requireContext(), "Enter Email", Toast.LENGTH_SHORT).show()
+
                 progressBar.visibility = View.GONE
+
                 return@setOnClickListener
             }
 
             if (password.isEmpty()) {
+
                 Toast.makeText(requireContext(), "Enter Password", Toast.LENGTH_SHORT).show()
+
                 progressBar.visibility = View.GONE
+
                 return@setOnClickListener
             }
 
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(requireActivity()) { task ->
+
                     progressBar.visibility = View.GONE
 
                     if (task.isSuccessful) {

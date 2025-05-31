@@ -5,6 +5,7 @@
         <item name="colorPrimary">@color/blue</item>
         <item name="colorPrimaryVariant">@color/blue</item>
         <item name="android:statusBarColor">@color/blue</item>
+        <item name="android:windowBackground">@color/background_dark</item>
     </style>
 
     <style name="Theme.ProyectoIntegrador" parent="Base.Theme.ProyectoIntegrador" />

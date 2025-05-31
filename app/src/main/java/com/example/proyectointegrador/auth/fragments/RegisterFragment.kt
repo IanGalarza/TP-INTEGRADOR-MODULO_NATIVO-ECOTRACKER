@@ -17,6 +17,7 @@ class RegisterFragment : Fragment() {
 
     private lateinit var editTextEmail: TextInputEditText
     private lateinit var editTextPassword: TextInputEditText
+    private lateinit var editTextConfirmPassword: TextInputEditText
     private lateinit var buttonRegister: Button
     private lateinit var progressBar: ProgressBar
     private lateinit var textViewLoginNow: TextView
@@ -43,6 +44,7 @@ class RegisterFragment : Fragment() {
 
         editTextEmail = view.findViewById(R.id.email)
         editTextPassword = view.findViewById(R.id.password)
+        editTextConfirmPassword = view.findViewById(R.id.confirmPassword)
         buttonRegister = view.findViewById(R.id.btn_register)
         progressBar = view.findViewById(R.id.progressBar)
         textViewLoginNow = view.findViewById(R.id.loginNow)
@@ -56,6 +58,7 @@ class RegisterFragment : Fragment() {
 
             val email = editTextEmail.text.toString()
             val password = editTextPassword.text.toString()
+            val confirmPassword = editTextConfirmPassword.text.toString()
 
             if (email.isEmpty()) {
 
@@ -75,6 +78,24 @@ class RegisterFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            if (confirmPassword.isEmpty()) {
+
+                Toast.makeText(requireContext(), "Confirm your password", Toast.LENGTH_SHORT).show()
+
+                progressBar.visibility = View.GONE
+
+                return@setOnClickListener
+            }
+
+            if (password != confirmPassword) {
+
+                Toast.makeText(requireContext(), "Passwords do not match", Toast.LENGTH_SHORT).show()
+
+                progressBar.visibility = View.GONE
+
+                return@setOnClickListener
+            }
+
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(requireActivity()) { task ->
 
@@ -83,6 +104,7 @@ class RegisterFragment : Fragment() {
                     if (task.isSuccessful) {
 
                         Toast.makeText(requireContext(), "Account created", Toast.LENGTH_SHORT).show()
+
                         findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
                     } else {
                         Toast.makeText(requireContext(), "Authentication failed.", Toast.LENGTH_SHORT).show()

@@ -3,10 +3,11 @@
     <string name="login">Login</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
     <string name="sing_in">Sing in</string>
     <string name="register">Register</string>
     <string name="sign_up">Sign up</string>
-    <string name="click_to_login">Click to login</string>
-    <string name="click_to_register">Click to register</string>
+    <string name="click_to_login">Registered already? Log In</string>
+    <string name="click_to_register">New user? Register Now</string>
     <string name="logout">Logout</string>
 </resources>
