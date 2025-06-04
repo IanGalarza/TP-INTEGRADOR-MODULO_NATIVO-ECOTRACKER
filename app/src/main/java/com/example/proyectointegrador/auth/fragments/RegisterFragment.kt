@@ -12,9 +12,11 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
 
 class RegisterFragment : Fragment() {
 
+    private lateinit var editTextName: TextInputEditText
     private lateinit var editTextEmail: TextInputEditText
     private lateinit var editTextPassword: TextInputEditText
     private lateinit var editTextConfirmPassword: TextInputEditText
@@ -22,10 +24,12 @@ class RegisterFragment : Fragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var textViewLoginNow: TextView
     private lateinit var auth: FirebaseAuth
+    private lateinit var firestore: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
+        firestore = FirebaseFirestore.getInstance()
     }
 
     override fun onCreateView(
@@ -42,6 +46,7 @@ class RegisterFragment : Fragment() {
             insets
         }
 
+        editTextName = view.findViewById(R.id.name)
         editTextEmail = view.findViewById(R.id.email)
         editTextPassword = view.findViewById(R.id.password)
         editTextConfirmPassword = view.findViewById(R.id.confirmPassword)
@@ -56,9 +61,20 @@ class RegisterFragment : Fragment() {
         buttonRegister.setOnClickListener {
             progressBar.visibility = View.VISIBLE
 
+            val name = editTextName.text.toString()
             val email = editTextEmail.text.toString()
             val password = editTextPassword.text.toString()
             val confirmPassword = editTextConfirmPassword.text.toString()
+
+            if (name.isEmpty()) {
+
+                Toast.makeText(requireContext(), "Enter Full Name", Toast.LENGTH_SHORT).show()
+
+                progressBar.visibility = View.GONE
+
+                return@setOnClickListener
+            }
+
 
             if (email.isEmpty()) {
 
@@ -103,11 +119,25 @@ class RegisterFragment : Fragment() {
 
                     if (task.isSuccessful) {
 
-                        Toast.makeText(requireContext(), "Account created", Toast.LENGTH_SHORT).show()
+                        val userId = auth.currentUser?.uid ?: ""
 
-                        findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+                        val userMap = hashMapOf(
+                            "name" to name,
+                            "email" to email
+                        )
+                        firestore.collection("users")
+                            .document(userId)
+                            .set(userMap)
+                            .addOnSuccessListener {
+                                Toast.makeText(requireContext(), "Account created", Toast.LENGTH_SHORT).show()
+
+                                findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(requireContext(), "Error saving user info: ${e.message}", Toast.LENGTH_SHORT).show()
+                            }
                     } else {
-                        Toast.makeText(requireContext(), "Authentication failed.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Authentication failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
         }
