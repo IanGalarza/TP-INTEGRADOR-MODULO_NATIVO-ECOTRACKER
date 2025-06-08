@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/challenge_list_fragment"
         android:name="com.example.proyectointegrador.ChallengeListFragment"
-        android:label="ChallengeListFragment">
+        android:label="Challenges">
         <action
             android:id="@+id/show_challenge_detail"
             app:destination="@id/challenge_detail_fragment" />
@@ -16,7 +16,7 @@
     <fragment
         android:id="@+id/challenge_detail_fragment"
         android:name="com.example.proyectointegrador.ChallengeDetailFragment"
-        android:label="challenge_detail"
+        android:label="Challenge Details"
         tools:layout="@layout/fragment_challenge_detail">
         <argument
             android:name="item_id"

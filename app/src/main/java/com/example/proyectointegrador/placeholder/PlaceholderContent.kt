@@ -2,6 +2,7 @@ package com.example.proyectointegrador.placeholder
 
 import java.util.ArrayList
 import java.util.HashMap
+import com.google.firebase.firestore.FirebaseFirestore
 
 object PlaceholderContent {
 
@@ -9,33 +10,48 @@ object PlaceholderContent {
 
     val ITEM_MAP: MutableMap<String, PlaceholderItem> = HashMap()
 
-    private val COUNT = 25
-
-    init {
-        for (i in 1..COUNT) {
-            addItem(createPlaceholderItem(i))
-        }
-    }
 
     private fun addItem(item: PlaceholderItem) {
         ITEMS.add(item)
         ITEM_MAP.put(item.id, item)
     }
 
-    private fun createPlaceholderItem(position: Int): PlaceholderItem {
-        return PlaceholderItem(position.toString(), "Item " + position, makeDetails(position))
+    fun loadChallengesFromFirestore(onComplete: () -> Unit, onError: (Exception) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("challenges_global")
+            .get()
+            .addOnSuccessListener { result ->
+                PlaceholderContent.ITEMS.clear()
+                PlaceholderContent.ITEM_MAP.clear()
+                for (document in result) {
+                    val item = PlaceholderItem(
+                        id = document.id,
+                        title = document.getString("title") ?: "Sin título",
+                        description = document.getString("description") ?: "",
+                        objectives = document.get("objectives") as? List<String> ?: emptyList(),
+                        status = document.getString("status") ?: "INACTIVE",
+                        category = document.getString("category") ?: "",
+                        imageUrl = document.getString("imageUrl")
+                    )
+                    PlaceholderContent.ITEMS.add(item)
+                    PlaceholderContent.ITEM_MAP[item.id] = item
+                }
+                onComplete()
+            }
+            .addOnFailureListener { exception ->
+                onError(exception)
+            }
     }
 
-    private fun makeDetails(position: Int): String {
-        val builder = StringBuilder()
-        builder.append("Details about Item: ").append(position)
-        for (i in 0..position - 1) {
-            builder.append("\nMore details information here.")
-        }
-        return builder.toString()
-    }
-
-    data class PlaceholderItem(val id: String, val content: String, val details: String) {
-        override fun toString(): String = content
+    data class PlaceholderItem(
+        val id: String,
+        val title: String,
+        val description: String,
+        val objectives: List<String>,
+        val status: String,
+        val category: String,
+        val imageUrl: String?
+    ) {
+        override fun toString(): String = title
     }
 }

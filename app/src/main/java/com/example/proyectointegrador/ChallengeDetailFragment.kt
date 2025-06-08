@@ -67,11 +67,11 @@ class ChallengeDetailFragment : Fragment() {
     }
 
     private fun updateContent() {
-        toolbarLayout?.title = item?.content
+        toolbarLayout?.title = item?.title
 
         // Show the placeholder content as text in a TextView.
         item?.let {
-            itemDetailTextView.text = it.details
+            itemDetailTextView.text = it.description
         }
     }
 
@@ -84,4 +84,5 @@ class ChallengeDetailFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 }

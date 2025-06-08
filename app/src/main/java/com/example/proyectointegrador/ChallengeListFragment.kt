@@ -64,14 +64,23 @@ class ChallengeListFragment : Fragment() {
         ViewCompat.addOnUnhandledKeyEventListener(view, unhandledKeyEventListenerCompat)
 
         val recyclerView: RecyclerView = binding.challengeList
-
-        // Leaving this not using view binding as it relies on if the view is visible the current
-        // layout configuration (layout, layout-sw600dp)
         val itemDetailFragmentContainer: View? =
             view.findViewById(R.id.challenge_detail_nav_container)
 
-        setupRecyclerView(recyclerView, itemDetailFragmentContainer)
+        // Cargar desafíos desde Firestore
+        PlaceholderContent.loadChallengesFromFirestore(
+            onComplete = {
+                recyclerView.adapter = SimpleItemRecyclerViewAdapter(
+                    PlaceholderContent.ITEMS,
+                    itemDetailFragmentContainer
+                )
+            },
+            onError = { exception ->
+                Toast.makeText(requireContext(), "Error al cargar desafíos: ${exception.message}", Toast.LENGTH_LONG).show()
+            }
+        )
     }
+
 
     private fun setupRecyclerView(
         recyclerView: RecyclerView,
@@ -102,8 +111,7 @@ class ChallengeListFragment : Fragment() {
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = values[position]
-            holder.idView.text = item.id
-            holder.contentView.text = item.content
+            holder.contentView.text = item.title
 
             with(holder.itemView) {
                 tag = item
@@ -167,10 +175,8 @@ class ChallengeListFragment : Fragment() {
 
         inner class ViewHolder(binding: ChallengeListContentBinding) :
             RecyclerView.ViewHolder(binding.root) {
-            val idView: TextView = binding.idText
             val contentView: TextView = binding.content
         }
-
     }
 
     override fun onDestroyView() {
