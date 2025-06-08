@@ -11,4 +11,8 @@
     <string name="click_to_register">New user? Register Now</string>
     <string name="logout">Logout</string>
     <string name="fullname">Fullname</string>
+    <string name="welcome">Welcome!</string>
+    <string name="title_activity_challenge_detail_host">ChallengeDetailHostActivity</string>
+    <string name="title_challenge_list">Challenges</string>
+    <string name="title_challenge_detail">Challenge Detail</string>
 </resources>
