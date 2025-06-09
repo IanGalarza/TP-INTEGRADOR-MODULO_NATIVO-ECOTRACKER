@@ -20,4 +20,5 @@
     <string name="challenge_history">Challenge history</string>
     <string name="profile">Profile</string>
     <string name="home">Home</string>
+    <string name="start_challenge" />
 </resources>

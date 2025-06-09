@@ -43,6 +43,25 @@ object PlaceholderContent {
             }
     }
 
+    fun guardarChallengeEnUsuario(uid: String, challenge: PlaceholderItem, onSuccess: () -> Unit, onError: (Exception) -> Unit) {
+        val firestore = FirebaseFirestore.getInstance()
+        val challengeMap = hashMapOf(
+            "title" to challenge.title,
+            "description" to challenge.description,
+            "objectives" to challenge.objectives,
+            "status" to "ACTIVE",
+            "startedAt" to com.google.firebase.Timestamp.now()
+        )
+
+        firestore.collection("users")
+            .document(uid)
+            .collection("active_challenges")
+            .document(challenge.id)
+            .set(challengeMap)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onError(it) }
+    }
+
     data class PlaceholderItem(
         val id: String,
         val title: String,

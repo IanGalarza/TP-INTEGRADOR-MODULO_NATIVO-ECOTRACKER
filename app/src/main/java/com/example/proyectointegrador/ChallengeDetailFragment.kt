@@ -8,19 +8,29 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import com.example.proyectointegrador.placeholder.PlaceholderContent
 import com.example.proyectointegrador.databinding.FragmentChallengeDetailBinding
+import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class ChallengeDetailFragment : Fragment() {
 
     private var item: PlaceholderContent.PlaceholderItem? = null
 
-    lateinit var itemDetailTextView: TextView
+    //lateinit var itemDetailTextView: TextView
     private var toolbarLayout: CollapsingToolbarLayout? = null
 
     private var _binding: FragmentChallengeDetailBinding? = null
+
+    lateinit var headerImageView: ImageView
+
+
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -58,10 +68,16 @@ class ChallengeDetailFragment : Fragment() {
         val rootView = binding.root
 
         toolbarLayout = binding.toolbarLayout
-        itemDetailTextView = binding.challengeDetail
+        //itemDetailTextView = binding.challengeDetail
+        headerImageView = binding.headerImage!!
 
         updateContent()
         rootView.setOnDragListener(dragListener)
+
+        binding.fab?.setOnClickListener {
+            Toast.makeText(requireContext(), "¡Challenge iniciado!", Toast.LENGTH_SHORT).show()
+            guardarChallengeEnFirebase()
+        }
 
         return rootView
     }
@@ -69,10 +85,72 @@ class ChallengeDetailFragment : Fragment() {
     private fun updateContent() {
         toolbarLayout?.title = item?.title
 
-        // Show the placeholder content as text in a TextView.
-        item?.let {
-            itemDetailTextView.text = it.description
+        item?.imageUrl?.let { imageUrl ->
+            Glide.with(this)
+                .load(imageUrl)
+                .into(headerImageView)
         }
+
+        item?.let {
+            binding.challengeDescription?.text = it.description
+            binding.challengeCategory?.text = "Category: ${it.category}"
+            binding.challengeStatus?.text = "Status: ${it.status}"
+
+            binding.challengeObjectivesContainer?.removeAllViews()
+            it.objectives.forEach { objetivo ->
+                val textView = TextView(requireContext()).apply {
+                    text = "• $objetivo"
+                    textSize = 16f
+                    setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
+                    setPadding(0, 4, 0, 4)
+                }
+                binding.challengeObjectivesContainer?.addView(textView)
+            }
+
+            val user = FirebaseAuth.getInstance().currentUser
+            if (user != null) {
+                FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(user.uid)
+                    .collection("active_challenges")
+                    .document(it.id)
+                    .get()
+                    .addOnSuccessListener { doc ->
+                        if (doc.exists()) {
+                            binding.fab?.visibility = View.GONE
+                            binding.challengeStatus?.text = "Status: ACTIVE"
+                        } else {
+                            binding.fab?.visibility = View.VISIBLE
+                            binding.fab?.setOnClickListener {
+                                guardarChallengeEnFirebase()
+                            }
+                        }
+                    }
+            } else {
+                binding.fab?.visibility = View.GONE
+            }
+        }
+
+
+    }
+
+    private fun guardarChallengeEnFirebase() {
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user == null || item == null) {
+            Toast.makeText(requireContext(), "Usuario no autenticado o challenge inválido", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        PlaceholderContent.guardarChallengeEnUsuario(
+            uid = user.uid,
+            challenge = item!!,
+            onSuccess = {
+                Toast.makeText(requireContext(), "Challenge iniciado y guardado ✅", Toast.LENGTH_SHORT).show()
+            },
+            onError = {
+                Toast.makeText(requireContext(), "Error al guardar: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
+        )
     }
 
     companion object {
