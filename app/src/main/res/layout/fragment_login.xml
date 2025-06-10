@@ -51,6 +51,8 @@
             android:layout_marginHorizontal="32dp"
             android:textColor="@color/white"
             android:textColorHint="@color/white"
+            app:startIconDrawable="@drawable/ic_email"
+            app:startIconTint="@color/gray"
             app:layout_constraintTop_toBottomOf="@id/titleLogin"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -73,6 +75,10 @@
             android:layout_marginHorizontal="32dp"
             android:textColor="@color/white"
             android:textColorHint="@color/white"
+            app:startIconDrawable="@drawable/ic_lock"
+            app:startIconTint="@color/gray"
+            app:endIconMode="password_toggle"
+            app:endIconTint="@color/gray"
             app:layout_constraintTop_toBottomOf="@id/emailLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
