@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#FF000000</color>
+    <color name="semi_black">#80000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="green">#4fa853</color>
+    <color name="green">#99cc00</color>
+    <color name="red">#e74c3c</color>
+    <color name="gray">#B0B0B0</color>
     <color name="blue">#59b5df</color>
     <color name="background_dark">#1C2833</color>
+    <color name="cardBackgroundDark">#151E27</color>
     <color name="aqua_green">#00C4B4</color>
 </resources>

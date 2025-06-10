@@ -21,4 +21,6 @@
     <string name="profile">Profile</string>
     <string name="home">Home</string>
     <string name="start_challenge" />
+    <string name="objectives">Objectives:</string>
+    <string name="accept">Accept</string>
 </resources>

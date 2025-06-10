@@ -58,6 +58,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadUserData(uid: String) {
+
         val db = Firebase.firestore
         val userRef = db.collection("users").document(uid)
 

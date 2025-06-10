@@ -18,7 +18,6 @@ import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-
 class ChallengeDetailFragment : Fragment() {
 
     private var item: PlaceholderContent.PlaceholderItem? = null
@@ -29,8 +28,6 @@ class ChallengeDetailFragment : Fragment() {
     private var _binding: FragmentChallengeDetailBinding? = null
 
     lateinit var headerImageView: ImageView
-
-
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -74,7 +71,7 @@ class ChallengeDetailFragment : Fragment() {
         updateContent()
         rootView.setOnDragListener(dragListener)
 
-        binding.fab?.setOnClickListener {
+        binding.acceptButton?.setOnClickListener {
             Toast.makeText(requireContext(), "¡Challenge iniciado!", Toast.LENGTH_SHORT).show()
             guardarChallengeEnFirebase()
         }
@@ -84,6 +81,9 @@ class ChallengeDetailFragment : Fragment() {
 
     private fun updateContent() {
         toolbarLayout?.title = item?.title
+
+        binding.loadingSpinner?.visibility = View.VISIBLE
+        binding.challengeDetailScrollView?.visibility = View.GONE
 
         item?.imageUrl?.let { imageUrl ->
             Glide.with(this)
@@ -96,10 +96,20 @@ class ChallengeDetailFragment : Fragment() {
             binding.challengeCategory?.text = "Category: ${it.category}"
             binding.challengeStatus?.text = "Status: ${it.status}"
 
+            //Cambio los colores del status segun si esta activo o inactivo
+
+            val statusColor = when (it.status.uppercase()) {
+                "INACTIVE" -> R.color.red
+                else -> R.color.green
+            }
+
+            binding.challengeStatus?.setTextColor(ContextCompat.getColor(requireContext(), statusColor))
+
+
             binding.challengeObjectivesContainer?.removeAllViews()
             it.objectives.forEach { objetivo ->
                 val textView = TextView(requireContext()).apply {
-                    text = "• $objetivo"
+                    text = "✅ $objetivo"
                     textSize = 16f
                     setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
                     setPadding(0, 4, 0, 4)
@@ -117,17 +127,22 @@ class ChallengeDetailFragment : Fragment() {
                     .get()
                     .addOnSuccessListener { doc ->
                         if (doc.exists()) {
-                            binding.fab?.visibility = View.GONE
+                            binding.acceptButton?.visibility = View.GONE
                             binding.challengeStatus?.text = "Status: ACTIVE"
+                            binding.challengeStatus?.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
                         } else {
-                            binding.fab?.visibility = View.VISIBLE
-                            binding.fab?.setOnClickListener {
+                            binding.acceptButton?.visibility = View.VISIBLE
+                            binding.acceptButton?.setOnClickListener {
                                 guardarChallengeEnFirebase()
                             }
                         }
+                        binding.loadingSpinner?.visibility = View.GONE
+                        binding.challengeDetailScrollView?.visibility = View.VISIBLE
                     }
             } else {
-                binding.fab?.visibility = View.GONE
+                binding.acceptButton?.visibility = View.GONE
+
+
             }
         }
 
@@ -137,7 +152,7 @@ class ChallengeDetailFragment : Fragment() {
     private fun guardarChallengeEnFirebase() {
         val user = FirebaseAuth.getInstance().currentUser
         if (user == null || item == null) {
-            Toast.makeText(requireContext(), "Usuario no autenticado o challenge inválido", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "User not authenticated or invalid challenge", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -145,10 +160,12 @@ class ChallengeDetailFragment : Fragment() {
             uid = user.uid,
             challenge = item!!,
             onSuccess = {
-                Toast.makeText(requireContext(), "Challenge iniciado y guardado ✅", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Challenge started and saved!", Toast.LENGTH_SHORT).show()
+
+                updateContent()
             },
             onError = {
-                Toast.makeText(requireContext(), "Error al guardar: ${it.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Error saving challenge: ${it.message}", Toast.LENGTH_SHORT).show()
             }
         )
     }
@@ -162,5 +179,4 @@ class ChallengeDetailFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }

@@ -26,4 +26,14 @@
     <style name="CollapsingToolbarCollapsedText" parent="TextAppearance.Material3.TitleLarge">
         <item name="android:textColor">@android:color/white</item>
     </style>
+
+    <style name="TextAppearance.CollapsingToolbar.Outlined" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textColor">@color/green</item>
+        <item name="android:background">@drawable/toolbar_title_background</item>
+        <item name="android:shadowColor">@color/black</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:shadowDx">3</item>
+        <item name="android:shadowDy">3</item>
+        <item name="android:shadowRadius">3</item>
+    </style>
 </resources>
