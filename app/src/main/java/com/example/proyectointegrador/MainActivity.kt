@@ -4,7 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -24,6 +28,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var welcomeTextView: TextView
     private var user: FirebaseUser? = null
     private lateinit var challengesCard: CardView
+    private lateinit var welcomeSpinner: ProgressBar
+    private lateinit var activeChallengesSpinner: ProgressBar
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +50,9 @@ class MainActivity : AppCompatActivity() {
         welcomeTextView = findViewById(R.id.user_welcome)
         user = auth.currentUser
         challengesCard = findViewById(R.id.challenges_card)
+        welcomeSpinner = findViewById(R.id.welcome_spinner)
+        activeChallengesSpinner = findViewById(R.id.active_challenges_spinner)
+
 
         challengesCard.setOnClickListener {
             val intent = Intent(this, ChallengeDetailHostActivity::class.java)
@@ -54,16 +64,22 @@ class MainActivity : AppCompatActivity() {
             finish()
         } else {
             loadUserData(user!!.uid)
+            loadActiveChallenges(user!!.uid)
+
         }
     }
 
+    //Se utiliza para cargar el nombre para el mensaje de bienvenida
+
     private fun loadUserData(uid: String) {
+        welcomeSpinner.visibility = View.VISIBLE
 
         val db = Firebase.firestore
         val userRef = db.collection("users").document(uid)
 
         userRef.get()
             .addOnSuccessListener { document ->
+                welcomeSpinner.visibility = View.GONE
                 if (document != null && document.exists()) {
                     val name = document.getString("name")
                     welcomeTextView.text = "Welcome, $name!"
@@ -72,6 +88,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             .addOnFailureListener {
+                welcomeSpinner.visibility = View.GONE
                 welcomeTextView.text = "Welcome!"
             }
     }
@@ -80,6 +97,8 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
     }
+
+    //Menu desplegable en el toolbar
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -98,5 +117,55 @@ class MainActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    // Se cargan los challenges que el usuario tiene activo
+
+    private fun loadActiveChallenges(uid: String) {
+        activeChallengesSpinner.visibility = View.VISIBLE
+        val db = Firebase.firestore
+        val container = findViewById<LinearLayout>(R.id.active_challenges_container)
+
+        db.collection("users").document(uid).collection("active_challenges")
+            .get()
+            .addOnSuccessListener { documents ->
+                container.removeAllViews()
+                activeChallengesSpinner.visibility = View.GONE
+                if (documents.isEmpty) {
+                    val emptyView = TextView(this).apply {
+                        text = "You have no active challenges."
+                        setTextColor(resources.getColor(R.color.white, null))
+                        textSize = 16f
+                    }
+                    container.addView(emptyView)
+                    return@addOnSuccessListener
+                }
+
+                for (doc in documents) {
+                    val challengeTitle = doc.getString("title") ?: "Unnamed Challenge"
+                    val challengeId = doc.id
+
+                    val cardView = layoutInflater.inflate(R.layout.item_active_challenge, container, false)
+
+                    val titleTextView = cardView.findViewById<TextView>(R.id.title)
+                    titleTextView.text = challengeTitle
+
+                    cardView.setOnClickListener {
+                        Toast.makeText(this, " $challengeTitle", Toast.LENGTH_SHORT).show()
+
+                    }
+                    container.addView(cardView)
+                }
+            }
+            .addOnFailureListener {
+                container.removeAllViews()
+                activeChallengesSpinner.visibility = View.GONE
+                val errorView = TextView(this).apply {
+                    text = "Error loading challenges."
+                    setTextColor(resources.getColor(R.color.white, null))
+                    textSize = 16f
+                }
+                container.addView(errorView)
+            }
     }
 }

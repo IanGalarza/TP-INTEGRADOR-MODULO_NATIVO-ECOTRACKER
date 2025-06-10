@@ -68,11 +68,13 @@ class ChallengeDetailFragment : Fragment() {
         //itemDetailTextView = binding.challengeDetail
         headerImageView = binding.headerImage!!
 
+        // Carga los datos del desafio
         updateContent()
         rootView.setOnDragListener(dragListener)
 
+        // Aceptar el desafio
         binding.acceptButton?.setOnClickListener {
-            Toast.makeText(requireContext(), "¡Challenge iniciado!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Challenge started!", Toast.LENGTH_SHORT).show()
             guardarChallengeEnFirebase()
         }
 
@@ -117,6 +119,8 @@ class ChallengeDetailFragment : Fragment() {
                 binding.challengeObjectivesContainer?.addView(textView)
             }
 
+            //Se chequea si el usuario ya tiene aceptado este desafio
+
             val user = FirebaseAuth.getInstance().currentUser
             if (user != null) {
                 FirebaseFirestore.getInstance()
@@ -141,13 +145,11 @@ class ChallengeDetailFragment : Fragment() {
                     }
             } else {
                 binding.acceptButton?.visibility = View.GONE
-
-
             }
         }
-
-
     }
+
+    // Guardar el challenge en la coleccion del usuario
 
     private fun guardarChallengeEnFirebase() {
         val user = FirebaseAuth.getInstance().currentUser

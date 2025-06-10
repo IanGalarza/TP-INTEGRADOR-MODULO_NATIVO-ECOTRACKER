@@ -64,19 +64,30 @@ class ChallengeListFragment : Fragment() {
         ViewCompat.addOnUnhandledKeyEventListener(view, unhandledKeyEventListenerCompat)
 
         val recyclerView: RecyclerView = binding.challengeList
+        val progressBar = binding.progressSpinner
+
+        //Mostrar el spinner y ocultar la lista
+
+        progressBar?.visibility = View.VISIBLE
+        recyclerView.visibility = View.GONE
+
         val itemDetailFragmentContainer: View? =
             view.findViewById(R.id.challenge_detail_nav_container)
 
         // Cargar desafíos desde Firestore
+
         PlaceholderContent.loadChallengesFromFirestore(
             onComplete = {
                 recyclerView.adapter = SimpleItemRecyclerViewAdapter(
                     PlaceholderContent.ITEMS,
                     itemDetailFragmentContainer
                 )
+                progressBar?.visibility = View.GONE
+                recyclerView.visibility = View.VISIBLE
             },
             onError = { exception ->
-                Toast.makeText(requireContext(), "Error al cargar desafíos: ${exception.message}", Toast.LENGTH_LONG).show()
+                progressBar?.visibility = View.GONE
+                Toast.makeText(requireContext(), "Error loading challenges: ${exception.message}", Toast.LENGTH_LONG).show()
             }
         )
     }

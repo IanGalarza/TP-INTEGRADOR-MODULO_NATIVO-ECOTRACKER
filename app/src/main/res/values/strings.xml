@@ -23,4 +23,5 @@
     <string name="start_challenge" />
     <string name="objectives">Objectives:</string>
     <string name="accept">Accept</string>
+    <string name="active_challenges">Active Challenges:</string>
 </resources>

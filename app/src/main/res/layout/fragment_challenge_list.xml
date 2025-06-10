@@ -23,6 +23,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Línea separadora -->
+
     <View
         android:id="@+id/separator"
         android:layout_width="0dp"
@@ -34,7 +35,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="8dp" />
 
+    <!-- Spinner mientras carga la lista -->
+
+    <ProgressBar
+        android:id="@+id/progress_spinner"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <!-- Lista -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/challenge_list"
         android:name="com.example.proyectointegrador.ChallengeListFragment"

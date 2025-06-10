@@ -9,6 +9,7 @@
     tools:ignore="MergeRootFrame">
 
     <!-- App Bar con Toolbar e imagen -->
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
@@ -63,6 +64,7 @@
             android:padding="16dp">
 
             <!-- Card con Información general -->
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -108,6 +110,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <!-- Card con los Objetivos -->
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -142,6 +145,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <!-- Botón para aceptar -->
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/accept_button"
                 android:layout_width="match_parent"
