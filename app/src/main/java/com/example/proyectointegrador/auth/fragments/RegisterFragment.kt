@@ -9,13 +9,21 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.proyectointegrador.R
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
+import android.util.Patterns
+import androidx.core.widget.doOnTextChanged
+
 
 class RegisterFragment : Fragment() {
 
+    private lateinit var nameLayout: TextInputLayout
+    private lateinit var emailLayout: TextInputLayout
+    private lateinit var passwordLayout: TextInputLayout
+    private lateinit var confirmPasswordLayout: TextInputLayout
     private lateinit var editTextName: TextInputEditText
     private lateinit var editTextEmail: TextInputEditText
     private lateinit var editTextPassword: TextInputEditText
@@ -39,12 +47,19 @@ class RegisterFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_register, container, false)
     }
 
+    private fun clearErrorOnTyping(editText: EditText, layout: TextInputLayout) {
+        editText.doOnTextChanged { _, _, _, _ ->
+            layout.error = null
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        val passwordRegex = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$")
 
         editTextName = view.findViewById(R.id.name)
         editTextEmail = view.findViewById(R.id.email)
@@ -53,64 +68,69 @@ class RegisterFragment : Fragment() {
         buttonRegister = view.findViewById(R.id.btn_register)
         progressBar = view.findViewById(R.id.progressBar)
         textViewLoginNow = view.findViewById(R.id.loginNow)
+        nameLayout = view.findViewById(R.id.nameLayout)
+        emailLayout = view.findViewById(R.id.emailLayout)
+        passwordLayout = view.findViewById(R.id.passwordLayout)
+        confirmPasswordLayout = view.findViewById(R.id.confirmPasswordLayout)
+
+        clearErrorOnTyping(editTextName, nameLayout)
+        clearErrorOnTyping(editTextEmail, emailLayout)
+        clearErrorOnTyping(editTextPassword, passwordLayout)
+        clearErrorOnTyping(editTextConfirmPassword, confirmPasswordLayout)
 
         textViewLoginNow.setOnClickListener {
             findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
         }
 
         buttonRegister.setOnClickListener {
-            progressBar.visibility = View.VISIBLE
 
-            val name = editTextName.text.toString()
-            val email = editTextEmail.text.toString()
+            nameLayout.error = null
+            emailLayout.error = null
+            passwordLayout.error = null
+            confirmPasswordLayout.error = null
+
+            val name = editTextName.text.toString().trim()
+            val email = editTextEmail.text.toString().trim()
             val password = editTextPassword.text.toString()
             val confirmPassword = editTextConfirmPassword.text.toString()
 
+            var isValid = true
+
             if (name.isEmpty()) {
-
-                Toast.makeText(requireContext(), "Enter Full Name", Toast.LENGTH_SHORT).show()
-
-                progressBar.visibility = View.GONE
-
-                return@setOnClickListener
+                nameLayout.error = "Please enter your full name"
+                isValid = false
             }
 
-
             if (email.isEmpty()) {
-
-                Toast.makeText(requireContext(), "Enter Email", Toast.LENGTH_SHORT).show()
-
-                progressBar.visibility = View.GONE
-
-                return@setOnClickListener
+                emailLayout.error = "Please enter your email"
+                isValid = false
+            } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                emailLayout.error = "Please enter a valid email address"
+                isValid = false
             }
 
             if (password.isEmpty()) {
-
-                Toast.makeText(requireContext(), "Enter Password", Toast.LENGTH_SHORT).show()
-
-                progressBar.visibility = View.GONE
-
-                return@setOnClickListener
+                passwordLayout.error = "Please enter your password"
+                isValid = false
+            } else if (!passwordRegex.matches(password)) {
+                passwordLayout.error = "Password must be at least 8 characters and include a lowercase, uppercase letter, and a number"
+                isValid = false
             }
 
             if (confirmPassword.isEmpty()) {
-
-                Toast.makeText(requireContext(), "Confirm your password", Toast.LENGTH_SHORT).show()
-
-                progressBar.visibility = View.GONE
-
-                return@setOnClickListener
+                confirmPasswordLayout.error = "Please confirm your password"
+                isValid = false
+            } else if (password != confirmPassword) {
+                confirmPasswordLayout.error = "Passwords do not match"
+                isValid = false
             }
 
-            if (password != confirmPassword) {
+            // Si hay errores, no continuar
 
-                Toast.makeText(requireContext(), "Passwords do not match", Toast.LENGTH_SHORT).show()
+            if (!isValid) return@setOnClickListener
 
-                progressBar.visibility = View.GONE
 
-                return@setOnClickListener
-            }
+            progressBar.visibility = View.VISIBLE
 
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(requireActivity()) { task ->

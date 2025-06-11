@@ -6,17 +6,21 @@ import android.view.*
 import android.widget.*
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.proyectointegrador.MainActivity
 import com.example.proyectointegrador.R
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 class LoginFragment : Fragment() {
 
+    private lateinit var emailLayout: TextInputLayout
+    private lateinit var passwordLayout: TextInputLayout
     private lateinit var editTextEmail: TextInputEditText
     private lateinit var editTextPassword: TextInputEditText
     private lateinit var buttonLogin: Button
@@ -27,6 +31,12 @@ class LoginFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
+    }
+
+    private fun clearErrorOnTyping(editText: EditText, layout: TextInputLayout) {
+        editText.doOnTextChanged { _, _, _, _ ->
+            layout.error = null
+        }
     }
 
     override fun onStart() {
@@ -58,6 +68,11 @@ class LoginFragment : Fragment() {
         buttonLogin = view.findViewById(R.id.btn_login)
         progressBar = view.findViewById(R.id.progressBar)
         textViewRegisterNow = view.findViewById(R.id.registerNow)
+        emailLayout = view.findViewById(R.id.emailLayout)
+        passwordLayout = view.findViewById(R.id.passwordLayout)
+
+        clearErrorOnTyping(editTextEmail, emailLayout)
+        clearErrorOnTyping(editTextPassword, passwordLayout)
 
         textViewRegisterNow.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
@@ -68,22 +83,24 @@ class LoginFragment : Fragment() {
 
             val email = editTextEmail.text.toString()
             val password = editTextPassword.text.toString()
+            var isValid = true
+
+            emailLayout.error = null
+            passwordLayout.error = null
+
 
             if (email.isEmpty()) {
-
-                Toast.makeText(requireContext(), "Enter Email", Toast.LENGTH_SHORT).show()
-
-                progressBar.visibility = View.GONE
-
-                return@setOnClickListener
+                emailLayout.error = "Please enter your email"
+                isValid = false
             }
 
             if (password.isEmpty()) {
+                passwordLayout.error = "Please enter your password"
+                isValid = false
+            }
 
-                Toast.makeText(requireContext(), "Enter Password", Toast.LENGTH_SHORT).show()
-
+            if (!isValid) {
                 progressBar.visibility = View.GONE
-
                 return@setOnClickListener
             }
 
@@ -103,7 +120,9 @@ class LoginFragment : Fragment() {
                         requireActivity().finish()
 
                     } else {
-                        Toast.makeText(requireContext(), "Authentication failed.", Toast.LENGTH_SHORT).show()
+                        val errorMsg = "Email or password is incorrect"
+                        emailLayout.error = errorMsg
+                        passwordLayout.error = errorMsg
                     }
                 }
         }
