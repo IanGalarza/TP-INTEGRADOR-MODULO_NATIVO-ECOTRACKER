@@ -18,6 +18,7 @@ import com.google.firebase.ktx.Firebase
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.proyectointegrador.profile.ProfileActivity
 
 
 class ChallengeDetailHostActivity : AppCompatActivity() {
@@ -71,6 +72,11 @@ class ChallengeDetailHostActivity : AppCompatActivity() {
                 true
             }
             R.id.action_challenges -> {
+                true
+            }
+            R.id.action_profile -> {
+                startActivity(Intent(this, ProfileActivity::class.java))
+                finish()
                 true
             }
             R.id.action_logout -> {

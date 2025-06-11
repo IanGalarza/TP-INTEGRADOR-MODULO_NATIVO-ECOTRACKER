@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/profile_nav_graph"
+    app:startDestination="@id/profileDetailFragment">
+
+    <fragment
+        android:id="@+id/profileDetailFragment"
+        android:name="com.example.proyectointegrador.profile.fragments.ProfileDetailFragment"
+        android:label="Profile Detail" />
+
+    <fragment
+        android:id="@+id/nameFragment"
+        android:name="com.example.proyectointegrador.profile.fragments.NameFragment"
+        android:label="Name">
+    </fragment>
+
+    <fragment
+        android:id="@+id/passwordFragment"
+        android:name="com.example.proyectointegrador.profile.fragments.PasswordFragment"
+        android:label="Password">
+    </fragment>
+
+    <fragment
+        android:id="@+id/emailFragment"
+        android:name="com.example.proyectointegrador.profile.fragments.EmailFragment"
+        android:label="Email">
+    </fragment>
+
+</navigation>

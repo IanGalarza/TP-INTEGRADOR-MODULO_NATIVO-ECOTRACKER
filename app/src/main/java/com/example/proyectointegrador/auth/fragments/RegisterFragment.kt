@@ -143,7 +143,8 @@ class RegisterFragment : Fragment() {
 
                         val userMap = hashMapOf(
                             "name" to name,
-                            "email" to email
+                            "email" to email,
+                            "points" to 0
                         )
                         firestore.collection("users")
                             .document(userId)

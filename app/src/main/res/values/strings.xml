@@ -24,4 +24,7 @@
     <string name="objectives">Objectives:</string>
     <string name="accept">Accept</string>
     <string name="active_challenges">Active Challenges:</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="save_changes">Save Changes</string>
 </resources>

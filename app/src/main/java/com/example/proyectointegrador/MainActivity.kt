@@ -16,6 +16,7 @@ import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.proyectointegrador.auth.AuthActivity
+import com.example.proyectointegrador.profile.ProfileActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -30,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var challengesCard: CardView
     private lateinit var welcomeSpinner: ProgressBar
     private lateinit var activeChallengesSpinner: ProgressBar
-
+    private lateinit var profileCard : CardView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,10 +53,15 @@ class MainActivity : AppCompatActivity() {
         challengesCard = findViewById(R.id.challenges_card)
         welcomeSpinner = findViewById(R.id.welcome_spinner)
         activeChallengesSpinner = findViewById(R.id.active_challenges_spinner)
-
+        profileCard = findViewById(R.id.profile_card)
 
         challengesCard.setOnClickListener {
             val intent = Intent(this, ChallengeDetailHostActivity::class.java)
+            startActivity(intent)
+        }
+
+        profileCard.setOnClickListener{
+            val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
 
@@ -107,6 +113,10 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.action_challenges -> {
                 startActivity(Intent(this, ChallengeDetailHostActivity::class.java))
+                true
+            }
+            R.id.action_profile -> {
+                startActivity(Intent(this, ProfileActivity::class.java))
                 true
             }
             R.id.action_logout -> {
