@@ -27,4 +27,11 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="save_changes">Save Changes</string>
+    <string name="top_users">TOP USERS</string>
+    <string name="username">Username</string>
+    <string name="new_password">New password</string>
+    <string name="current_password">Current password</string>
+    <string name="your_points">Your points</string>
+    <string name="rightArrow"><![CDATA[>]]></string>
+    <string name="history">History</string>
 </resources>

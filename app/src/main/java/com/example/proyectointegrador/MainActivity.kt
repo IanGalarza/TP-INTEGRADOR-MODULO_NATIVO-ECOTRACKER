@@ -17,6 +17,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.proyectointegrador.auth.AuthActivity
 import com.example.proyectointegrador.profile.ProfileActivity
+import com.example.proyectointegrador.ranking.RankingActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -32,6 +33,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var welcomeSpinner: ProgressBar
     private lateinit var activeChallengesSpinner: ProgressBar
     private lateinit var profileCard : CardView
+    private lateinit var rankingCard: CardView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,9 +56,15 @@ class MainActivity : AppCompatActivity() {
         welcomeSpinner = findViewById(R.id.welcome_spinner)
         activeChallengesSpinner = findViewById(R.id.active_challenges_spinner)
         profileCard = findViewById(R.id.profile_card)
+        rankingCard = findViewById(R.id.ranking_card)
 
         challengesCard.setOnClickListener {
             val intent = Intent(this, ChallengeDetailHostActivity::class.java)
+            startActivity(intent)
+        }
+
+        rankingCard.setOnClickListener {
+            val intent = Intent(this, RankingActivity::class.java)
             startActivity(intent)
         }
 
@@ -64,6 +72,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
+
 
         if (user == null) {
             startActivity(Intent(this, AuthActivity::class.java))
@@ -117,6 +126,14 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.action_profile -> {
                 startActivity(Intent(this, ProfileActivity::class.java))
+                true
+            }
+            R.id.action_ranking -> {
+                startActivity(Intent(this, RankingActivity::class.java))
+                true
+            }
+            R.id.action_history -> {
+                // startActivity(Intent(this, HistoryActivity::class.java))
                 true
             }
             R.id.action_logout -> {
