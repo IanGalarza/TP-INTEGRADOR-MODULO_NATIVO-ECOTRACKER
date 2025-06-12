@@ -178,8 +178,9 @@ class MainActivity : AppCompatActivity() {
                     titleTextView.text = challengeTitle
 
                     cardView.setOnClickListener {
-                        Toast.makeText(this, " $challengeTitle", Toast.LENGTH_SHORT).show()
-
+                        val intent = Intent(this, ChallengeDetailHostActivity::class.java)
+                        intent.putExtra("challengeId", challengeId)
+                        startActivity(intent)
                     }
                     container.addView(cardView)
                 }

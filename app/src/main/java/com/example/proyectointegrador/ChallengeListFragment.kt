@@ -61,6 +61,8 @@ class ChallengeListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val challengeIdToOpen = activity?.intent?.getStringExtra("challengeId")
+
         ViewCompat.addOnUnhandledKeyEventListener(view, unhandledKeyEventListenerCompat)
 
         val recyclerView: RecyclerView = binding.challengeList
@@ -84,6 +86,21 @@ class ChallengeListFragment : Fragment() {
                 )
                 progressBar?.visibility = View.GONE
                 recyclerView.visibility = View.VISIBLE
+                challengeIdToOpen?.let { id ->
+                    val item = PlaceholderContent.ITEM_MAP[id]
+                    if (item != null) {
+                        val bundle = Bundle().apply {
+                            putString(ChallengeDetailFragment.ARG_ITEM_ID, id)
+                        }
+                        if (itemDetailFragmentContainer != null) {
+                            itemDetailFragmentContainer.findNavController()
+                                .navigate(R.id.fragment_challenge_detail, bundle)
+                        } else {
+                            view.findNavController().navigate(R.id.show_challenge_detail, bundle)
+                        }
+                        activity?.intent?.removeExtra("challengeId")
+                    }
+                }
             },
             onError = { exception ->
                 progressBar?.visibility = View.GONE
