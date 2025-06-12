@@ -1,5 +1,6 @@
 package com.example.proyectointegrador.placeholder
 
+import com.google.firebase.firestore.DocumentSnapshot
 import java.util.ArrayList
 import java.util.HashMap
 import com.google.firebase.firestore.FirebaseFirestore
@@ -50,7 +51,9 @@ object PlaceholderContent {
             "description" to challenge.description,
             "objectives" to challenge.objectives,
             "status" to "ACTIVE",
-            "startedAt" to com.google.firebase.Timestamp.now()
+            "startedAt" to com.google.firebase.Timestamp.now(),
+            "category" to challenge.category,
+            "imageUrl" to challenge.imageUrl
         )
 
         firestore.collection("users")
@@ -61,6 +64,23 @@ object PlaceholderContent {
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { onError(it) }
     }
+
+    // Para agregar en el placeholder la informacion del challenge, en caso de acceder desde el mainActivity
+
+    fun addItemFromDocument(document: DocumentSnapshot) {
+        val item = PlaceholderItem(
+            id = document.id,
+            title = document.getString("title") ?: "Sin título",
+            description = document.getString("description") ?: "",
+            objectives = document.get("objectives") as? List<String> ?: emptyList(),
+            status = document.getString("status") ?: "INACTIVE",
+            category = document.getString("category") ?: "",
+            imageUrl = document.getString("imageUrl")
+        )
+        ITEMS.add(item)
+        ITEM_MAP[item.id] = item
+    }
+
 
     data class PlaceholderItem(
         val id: String,

@@ -15,6 +15,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.proyectointegrador.Detail.DetailActivity
 import com.example.proyectointegrador.auth.AuthActivity
 import com.example.proyectointegrador.profile.ProfileActivity
 import com.example.proyectointegrador.ranking.RankingActivity
@@ -23,6 +24,8 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.example.proyectointegrador.placeholder.PlaceholderContent
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -178,7 +181,12 @@ class MainActivity : AppCompatActivity() {
                     titleTextView.text = challengeTitle
 
                     cardView.setOnClickListener {
-                        val intent = Intent(this, ChallengeDetailHostActivity::class.java)
+                        PlaceholderContent.ITEMS.clear()
+                        PlaceholderContent.ITEM_MAP.clear()
+
+                        PlaceholderContent.addItemFromDocument(doc)
+
+                        val intent = Intent(this, DetailActivity::class.java)
                         intent.putExtra("challengeId", challengeId)
                         startActivity(intent)
                     }
