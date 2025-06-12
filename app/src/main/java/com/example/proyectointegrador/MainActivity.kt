@@ -15,7 +15,10 @@ import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectointegrador.Detail.DetailActivity
+import com.example.proyectointegrador.adapter.ActiveChallengeAdapter
 import com.example.proyectointegrador.auth.AuthActivity
 import com.example.proyectointegrador.profile.ProfileActivity
 import com.example.proyectointegrador.ranking.RankingActivity
@@ -152,56 +155,60 @@ class MainActivity : AppCompatActivity() {
     // Se cargan los challenges que el usuario tiene activo
 
     private fun loadActiveChallenges(uid: String) {
-        activeChallengesSpinner.visibility = View.VISIBLE
         val db = Firebase.firestore
-        val container = findViewById<LinearLayout>(R.id.active_challenges_container)
+        val activeChallengesCard = findViewById<View>(R.id.active_challenges_card)
+        val recyclerView = findViewById<RecyclerView>(R.id.active_challenges_recycler)
+        val noActiveChallengesText = findViewById<TextView>(R.id.no_active_challenges_text)
+
+        activeChallengesSpinner.visibility = View.VISIBLE
+        activeChallengesCard.visibility = View.GONE
+        noActiveChallengesText.visibility = View.GONE
+
 
         db.collection("users").document(uid).collection("active_challenges")
             .get()
             .addOnSuccessListener { documents ->
-                container.removeAllViews()
                 activeChallengesSpinner.visibility = View.GONE
                 if (documents.isEmpty) {
-                    val emptyView = TextView(this).apply {
-                        text = "You have no active challenges."
-                        setTextColor(resources.getColor(R.color.white, null))
-                        textSize = 16f
-                    }
-                    container.addView(emptyView)
+                    activeChallengesCard.visibility = View.GONE
+                    noActiveChallengesText.visibility = View.VISIBLE
                     return@addOnSuccessListener
                 }
 
-                for (doc in documents) {
-                    val challengeTitle = doc.getString("title") ?: "Unnamed Challenge"
-                    val challengeId = doc.id
+                activeChallengesCard.visibility = View.VISIBLE
+                noActiveChallengesText.visibility = View.GONE
 
-                    val cardView = layoutInflater.inflate(R.layout.item_active_challenge, container, false)
-
-                    val titleTextView = cardView.findViewById<TextView>(R.id.title)
-                    titleTextView.text = challengeTitle
-
-                    cardView.setOnClickListener {
-                        PlaceholderContent.ITEMS.clear()
-                        PlaceholderContent.ITEM_MAP.clear()
-
-                        PlaceholderContent.addItemFromDocument(doc)
-
-                        val intent = Intent(this, DetailActivity::class.java)
-                        intent.putExtra("challengeId", challengeId)
-                        startActivity(intent)
-                    }
-                    container.addView(cardView)
+                val challengeList = documents.map {
+                    val title = it.getString("title") ?: "Unnamed Challenge"
+                    val id = it.id
+                    id to title
                 }
+
+                recyclerView.layoutManager = LinearLayoutManager(this)
+
+                val adapter = ActiveChallengeAdapter(challengeList) { challengeId ->
+                    PlaceholderContent.ITEMS.clear()
+                    PlaceholderContent.ITEM_MAP.clear()
+
+                    val doc = documents.firstOrNull { it.id == challengeId }
+                    if (doc != null) {
+                        PlaceholderContent.addItemFromDocument(doc)
+                    }
+
+                    val intent = Intent(this, DetailActivity::class.java)
+                    intent.putExtra("challengeId", challengeId)
+                    startActivity(intent)
+                }
+
+                recyclerView.adapter = adapter
+                recyclerView.setHasFixedSize(true)
             }
             .addOnFailureListener {
-                container.removeAllViews()
                 activeChallengesSpinner.visibility = View.GONE
-                val errorView = TextView(this).apply {
-                    text = "Error loading challenges."
-                    setTextColor(resources.getColor(R.color.white, null))
-                    textSize = 16f
-                }
-                container.addView(errorView)
+                activeChallengesCard.visibility = View.GONE
+                noActiveChallengesText.visibility = View.VISIBLE
+                Toast.makeText(this, "Error loading challenges.", Toast.LENGTH_SHORT).show()
             }
     }
 }
+

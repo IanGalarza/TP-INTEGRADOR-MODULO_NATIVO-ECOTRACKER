@@ -34,4 +34,5 @@
     <string name="your_points">Your points</string>
     <string name="rightArrow"><![CDATA[>]]></string>
     <string name="history">History</string>
+    <string name="you_have_no_active_challenges">You have no active challenges.</string>
 </resources>
