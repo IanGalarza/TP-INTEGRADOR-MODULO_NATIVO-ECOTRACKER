@@ -12,15 +12,8 @@ fun updateLocale(context: Context, languageCode: String) {
     val resources = context.resources
     val config = resources.configuration
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        config.setLocale(locale)
-        context.createConfigurationContext(config)
-    } else {
-        @Suppress("DEPRECATION")
-        config.locale = locale
-        @Suppress("DEPRECATION")
-        resources.updateConfiguration(config, resources.displayMetrics)
-    }
+    config.setLocale(locale)
+    resources.updateConfiguration(config, resources.displayMetrics)
 }
 
 
