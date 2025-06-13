@@ -59,9 +59,10 @@ class PreferencesFragment : Fragment() {
             }
 
             if (selectedLangCode != savedLangCode) {
-                prefs.edit().putString(KEY_LANGUAGE, selectedLangCode).apply()
+                prefs.edit().putString(KEY_LANGUAGE, selectedLangCode).commit()
                 updateLocale(requireContext(), selectedLangCode)
                 Toast.makeText(requireContext(), getString(R.string.language_selected, selectedLangCode), Toast.LENGTH_SHORT).show()
+                activity?.recreate()
             } else {
                 Toast.makeText(requireContext(), getString(R.string.no_changes), Toast.LENGTH_SHORT).show()
             }
