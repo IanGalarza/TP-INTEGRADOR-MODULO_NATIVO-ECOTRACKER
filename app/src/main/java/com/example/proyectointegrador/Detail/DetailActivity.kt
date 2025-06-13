@@ -12,6 +12,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.proyectointegrador.ChallengeDetailFragment
 import com.example.proyectointegrador.MainActivity
 import com.example.proyectointegrador.ChallengeDetailHostActivity
+import com.example.proyectointegrador.History.HistoryActivity
 import com.example.proyectointegrador.R
 import com.example.proyectointegrador.auth.AuthActivity
 import com.example.proyectointegrador.profile.ProfileActivity
@@ -81,12 +82,11 @@ class DetailActivity : AppCompatActivity() {
                 finish()
                 true
             }
-
             R.id.action_history -> {
-                // startActivity(Intent(this, HistoryActivity::class.java))
+                startActivity(Intent(this, HistoryActivity::class.java))
+                finish()
                 true
             }
-
             R.id.action_profile -> {
                 startActivity(Intent(this, ProfileActivity::class.java))
                 finish()

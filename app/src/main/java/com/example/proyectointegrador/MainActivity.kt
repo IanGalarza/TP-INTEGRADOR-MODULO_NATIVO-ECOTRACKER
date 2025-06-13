@@ -18,6 +18,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectointegrador.Detail.DetailActivity
+import com.example.proyectointegrador.History.HistoryActivity
 import com.example.proyectointegrador.adapter.ActiveChallengeAdapter
 import com.example.proyectointegrador.auth.AuthActivity
 import com.example.proyectointegrador.profile.ProfileActivity
@@ -40,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var activeChallengesSpinner: ProgressBar
     private lateinit var profileCard : CardView
     private lateinit var rankingCard: CardView
+    private lateinit var historyCard: CardView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +65,7 @@ class MainActivity : AppCompatActivity() {
         activeChallengesSpinner = findViewById(R.id.active_challenges_spinner)
         profileCard = findViewById(R.id.profile_card)
         rankingCard = findViewById(R.id.ranking_card)
+        historyCard = findViewById(R.id.history_card)
 
         challengesCard.setOnClickListener {
             val intent = Intent(this, ChallengeDetailHostActivity::class.java)
@@ -71,6 +74,11 @@ class MainActivity : AppCompatActivity() {
 
         rankingCard.setOnClickListener {
             val intent = Intent(this, RankingActivity::class.java)
+            startActivity(intent)
+        }
+
+        historyCard.setOnClickListener{
+            val intent = Intent(this, HistoryActivity::class.java)
             startActivity(intent)
         }
 
@@ -139,7 +147,7 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.action_history -> {
-                // startActivity(Intent(this, HistoryActivity::class.java))
+                startActivity(Intent(this, HistoryActivity::class.java))
                 true
             }
             R.id.action_logout -> {

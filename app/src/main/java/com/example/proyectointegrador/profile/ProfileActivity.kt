@@ -10,6 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.proyectointegrador.R
 import android.view.MenuItem
 import com.example.proyectointegrador.ChallengeDetailHostActivity
+import com.example.proyectointegrador.History.HistoryActivity
 import com.example.proyectointegrador.MainActivity
 import com.example.proyectointegrador.auth.AuthActivity
 import com.example.proyectointegrador.ranking.RankingActivity
@@ -61,7 +62,8 @@ class ProfileActivity : AppCompatActivity() {
                 true
             }
             R.id.action_history -> {
-                // startActivity(Intent(this, HistoryActivity::class.java))
+                startActivity(Intent(this, HistoryActivity::class.java))
+                finish()
                 true
             }
             R.id.action_profile -> {

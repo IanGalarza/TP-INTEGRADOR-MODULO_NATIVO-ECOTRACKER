@@ -18,6 +18,7 @@ import com.google.firebase.ktx.Firebase
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.proyectointegrador.History.HistoryActivity
 import com.example.proyectointegrador.profile.ProfileActivity
 import com.example.proyectointegrador.ranking.RankingActivity
 
@@ -81,7 +82,8 @@ class ChallengeDetailHostActivity : AppCompatActivity() {
                 true
             }
             R.id.action_history -> {
-                // startActivity(Intent(this, HistoryActivity::class.java))
+                startActivity(Intent(this, HistoryActivity::class.java))
+                finish()
                 true
             }
             R.id.action_profile -> {

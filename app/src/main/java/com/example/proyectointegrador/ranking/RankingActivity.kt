@@ -13,6 +13,7 @@ import com.example.proyectointegrador.auth.AuthActivity
 import com.example.proyectointegrador.MainActivity
 import com.example.proyectointegrador.profile.ProfileActivity
 import com.example.proyectointegrador.ChallengeDetailHostActivity
+import com.example.proyectointegrador.History.HistoryActivity
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -59,7 +60,8 @@ class RankingActivity : AppCompatActivity() {
                 true
             }
             R.id.action_history -> {
-                // startActivity(Intent(this, HistoryActivity::class.java))
+                startActivity(Intent(this, HistoryActivity::class.java))
+                finish()
                 true
             }
             R.id.action_profile -> {
