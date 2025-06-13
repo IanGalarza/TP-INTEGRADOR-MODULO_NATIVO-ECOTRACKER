@@ -47,6 +47,11 @@ class ProfileDetailFragment : Fragment() {
             findNavController().navigate(R.id.passwordFragment)
         }
 
+        view.findViewById<LinearLayout>(R.id.btn_edit_preferences).setOnClickListener {
+            findNavController().navigate(R.id.preferencesFragment)
+        }
+
+
         // Obtener y mostrar puntos
 
         val pointsText = view.findViewById<TextView>(R.id.pointsText)

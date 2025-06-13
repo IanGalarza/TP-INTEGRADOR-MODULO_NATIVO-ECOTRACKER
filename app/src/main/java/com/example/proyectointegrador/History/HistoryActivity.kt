@@ -1,6 +1,8 @@
 package com.example.proyectointegrador.History
 
+import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -16,6 +18,7 @@ import com.example.proyectointegrador.profile.ProfileActivity
 import com.example.proyectointegrador.ranking.RankingActivity
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import java.util.Locale
 
 class HistoryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,4 +81,18 @@ class HistoryActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+    override fun attachBaseContext(newBase: Context) {
+        val prefs = newBase.getSharedPreferences("user_preferences", Context.MODE_PRIVATE)
+        val langCode = prefs.getString("preferred_language", "en") ?: "en"
+        val locale = Locale(langCode)
+        Locale.setDefault(locale)
+
+        val config = Configuration()
+        config.setLocale(locale)
+
+        val context = newBase.createConfigurationContext(config)
+        super.attachBaseContext(context)
+    }
+
 }

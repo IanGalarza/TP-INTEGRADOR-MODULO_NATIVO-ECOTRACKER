@@ -46,4 +46,9 @@
     <string name="history">History</string>
     <string name="you_have_no_active_challenges">You have no active challenges.</string>
     <string name="preferences">Preferences</string>
+    <string name="select_your_preferred_language">Select your preferred language</string>
+    <string name="select_language_first">Please select a language first</string>
+    <string name="language_selected">Language selected: %1$s</string>
+    <string name="no_changes">No changes were made</string>
+
 </resources>

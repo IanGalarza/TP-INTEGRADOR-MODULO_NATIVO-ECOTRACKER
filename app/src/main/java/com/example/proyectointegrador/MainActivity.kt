@@ -1,6 +1,8 @@
 package com.example.proyectointegrador
 
+import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -29,6 +31,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.example.proyectointegrador.placeholder.PlaceholderContent
+import java.util.Locale
 
 
 class MainActivity : AppCompatActivity() {
@@ -217,6 +220,21 @@ class MainActivity : AppCompatActivity() {
                 noActiveChallengesText.visibility = View.VISIBLE
                 Toast.makeText(this, getString(R.string.error_loading_challenges), Toast.LENGTH_SHORT).show()
             }
+    }
+
+    //Cambio de idioma
+
+    override fun attachBaseContext(newBase: Context) {
+        val prefs = newBase.getSharedPreferences("user_preferences", Context.MODE_PRIVATE)
+        val langCode = prefs.getString("preferred_language", "en") ?: "en"
+        val locale = Locale(langCode)
+        Locale.setDefault(locale)
+
+        val config = Configuration()
+        config.setLocale(locale)
+
+        val context = newBase.createConfigurationContext(config)
+        super.attachBaseContext(context)
     }
 }
 

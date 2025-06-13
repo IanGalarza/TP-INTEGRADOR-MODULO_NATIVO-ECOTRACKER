@@ -27,4 +27,11 @@
         android:label="Email">
     </fragment>
 
+    <fragment
+        android:id="@+id/preferencesFragment"
+        android:name="com.example.proyectointegrador.profile.fragments.PreferencesFragment"
+        android:label="Preferences">
+    </fragment>
+
+
 </navigation>

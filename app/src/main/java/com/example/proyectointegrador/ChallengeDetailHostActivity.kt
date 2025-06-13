@@ -1,6 +1,8 @@
 package com.example.proyectointegrador
 
+import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -21,6 +23,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.proyectointegrador.History.HistoryActivity
 import com.example.proyectointegrador.profile.ProfileActivity
 import com.example.proyectointegrador.ranking.RankingActivity
+import java.util.Locale
 
 
 class ChallengeDetailHostActivity : AppCompatActivity() {
@@ -99,5 +102,17 @@ class ChallengeDetailHostActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+    override fun attachBaseContext(newBase: Context) {
+        val prefs = newBase.getSharedPreferences("user_preferences", Context.MODE_PRIVATE)
+        val langCode = prefs.getString("preferred_language", "en") ?: "en"
+        val locale = Locale(langCode)
+        Locale.setDefault(locale)
+
+        val config = Configuration()
+        config.setLocale(locale)
+
+        val context = newBase.createConfigurationContext(config)
+        super.attachBaseContext(context)
     }
 }
