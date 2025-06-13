@@ -111,14 +111,14 @@ class MainActivity : AppCompatActivity() {
                 welcomeSpinner.visibility = View.GONE
                 if (document != null && document.exists()) {
                     val name = document.getString("name")
-                    welcomeTextView.text = "Welcome, $name!"
+                    welcomeTextView.text = getString(R.string.welcome_user, name)
                 } else {
-                    welcomeTextView.text = "Welcome!"
+                    welcomeTextView.text = getString(R.string.welcome)
                 }
             }
             .addOnFailureListener {
                 welcomeSpinner.visibility = View.GONE
-                welcomeTextView.text = "Welcome!"
+                welcomeTextView.text = getString(R.string.welcome)
             }
     }
 
@@ -215,7 +215,7 @@ class MainActivity : AppCompatActivity() {
                 activeChallengesSpinner.visibility = View.GONE
                 activeChallengesCard.visibility = View.GONE
                 noActiveChallengesText.visibility = View.VISIBLE
-                Toast.makeText(this, "Error loading challenges.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.error_loading_challenges), Toast.LENGTH_SHORT).show()
             }
     }
 }

@@ -31,7 +31,7 @@ class ProfileActivity : AppCompatActivity() {
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "My Profile"
+        supportActionBar?.title = getString(R.string.title_profile)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

@@ -32,7 +32,7 @@ class HistoryActivity : AppCompatActivity() {
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "History"
+        supportActionBar?.title = getString(R.string.history)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

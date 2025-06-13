@@ -74,7 +74,7 @@ class ChallengeDetailFragment : Fragment() {
 
         // Aceptar el desafio
         binding.acceptButton?.setOnClickListener {
-            Toast.makeText(requireContext(), "Challenge started!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.challenge_started), Toast.LENGTH_SHORT).show()
             guardarChallengeEnFirebase()
         }
 
@@ -95,8 +95,8 @@ class ChallengeDetailFragment : Fragment() {
 
         item?.let {
             binding.challengeDescription?.text = it.description
-            binding.challengeCategory?.text = "Category: ${it.category}"
-            binding.challengeStatus?.text = "Status: ${it.status}"
+            binding.challengeCategory?.text = getString(R.string.challenge_category, it.category)
+            binding.challengeStatus?.text = getString(R.string.challenge_status, it.status)
 
             //Cambio los colores del status segun si esta activo o inactivo
 
@@ -106,7 +106,6 @@ class ChallengeDetailFragment : Fragment() {
             }
 
             binding.challengeStatus?.setTextColor(ContextCompat.getColor(requireContext(), statusColor))
-
 
             binding.challengeObjectivesContainer?.removeAllViews()
             it.objectives.forEach { objetivo ->
@@ -154,7 +153,7 @@ class ChallengeDetailFragment : Fragment() {
     private fun guardarChallengeEnFirebase() {
         val user = FirebaseAuth.getInstance().currentUser
         if (user == null || item == null) {
-            Toast.makeText(requireContext(), "User not authenticated or invalid challenge", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.error_auth_or_challenge), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -162,12 +161,12 @@ class ChallengeDetailFragment : Fragment() {
             uid = user.uid,
             challenge = item!!,
             onSuccess = {
-                Toast.makeText(requireContext(), "Challenge started and saved!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.challenge_saved_success), Toast.LENGTH_SHORT).show()
 
                 updateContent()
             },
             onError = {
-                Toast.makeText(requireContext(), "Error saving challenge: ${it.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.error_saving_challenge, it.message ?: ""), Toast.LENGTH_SHORT).show()
             }
         )
     }

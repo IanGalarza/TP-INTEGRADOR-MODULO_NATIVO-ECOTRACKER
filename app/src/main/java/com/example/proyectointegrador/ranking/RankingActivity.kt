@@ -32,7 +32,7 @@ class RankingActivity : AppCompatActivity() {
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "Ranking"
+        supportActionBar?.title = getString(R.string.ranking)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

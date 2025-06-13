@@ -36,7 +36,7 @@ class DetailActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "Challenge Details"
+        supportActionBar?.title = getString(R.string.title_challenge_detail)
 
         if (savedInstanceState == null) {
             val challengeId = intent.getStringExtra("challengeId")

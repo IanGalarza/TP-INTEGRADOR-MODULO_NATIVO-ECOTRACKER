@@ -21,7 +21,6 @@ import com.example.proyectointegrador.databinding.ChallengeListContentBinding
 
 class ChallengeListFragment : Fragment() {
 
-
     private val unhandledKeyEventListenerCompat =
         ViewCompat.OnUnhandledKeyEventListenerCompat { v, event ->
             if (event.keyCode == KeyEvent.KEYCODE_Z && event.isCtrlPressed) {
@@ -89,11 +88,14 @@ class ChallengeListFragment : Fragment() {
             },
             onError = { exception ->
                 progressBar?.visibility = View.GONE
-                Toast.makeText(requireContext(), "Error loading challenges: ${exception.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.error_loading_challenges_list, exception.message ?: ""),
+                    Toast.LENGTH_LONG
+                ).show()
             }
         )
     }
-
 
     private fun setupRecyclerView(
         recyclerView: RecyclerView,
