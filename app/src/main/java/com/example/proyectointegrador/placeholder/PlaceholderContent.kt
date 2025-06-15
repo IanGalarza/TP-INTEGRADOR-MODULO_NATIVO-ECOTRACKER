@@ -8,13 +8,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 object PlaceholderContent {
 
     val ITEMS: MutableList<PlaceholderItem> = ArrayList()
-
     val ITEM_MAP: MutableMap<String, PlaceholderItem> = HashMap()
-
 
     private fun addItem(item: PlaceholderItem) {
         ITEMS.add(item)
-        ITEM_MAP.put(item.id, item)
+        ITEM_MAP[item.id] = item
     }
 
     fun loadChallengesFromFirestore(onComplete: () -> Unit, onError: (Exception) -> Unit) {
@@ -25,17 +23,26 @@ object PlaceholderContent {
                 PlaceholderContent.ITEMS.clear()
                 PlaceholderContent.ITEM_MAP.clear()
                 for (document in result) {
+                    val objectivesList = (document["objectives"] as? List<Map<String, Any>>)?.map { obj ->
+                        Objective(
+                            id = obj["id"] as? String ?: "",
+                            title = obj["title"] as? String ?: "",
+                            points = (obj["points"] as? Long)?.toInt() ?: 0
+                        )
+                    } ?: emptyList()
+
                     val item = PlaceholderItem(
                         id = document.id,
                         title = document.getString("title") ?: "Sin título",
                         description = document.getString("description") ?: "",
-                        objectives = document.get("objectives") as? List<String> ?: emptyList(),
+                        objectives = objectivesList,
                         status = document.getString("status") ?: "INACTIVE",
                         category = document.getString("category") ?: "",
-                        imageUrl = document.getString("imageUrl")
+                        imageUrl = document.getString("imageUrl"),
+                        durationInDays = (document.getLong("durationInDays") ?: 0L).toInt()
                     )
-                    PlaceholderContent.ITEMS.add(item)
-                    PlaceholderContent.ITEM_MAP[item.id] = item
+                    ITEMS.add(item)
+                    ITEM_MAP[item.id] = item
                 }
                 onComplete()
             }
@@ -46,14 +53,38 @@ object PlaceholderContent {
 
     fun guardarChallengeEnUsuario(uid: String, challenge: PlaceholderItem, onSuccess: () -> Unit, onError: (Exception) -> Unit) {
         val firestore = FirebaseFirestore.getInstance()
+        val now = com.google.firebase.Timestamp.now()
+
+        // Calcular endDate
+        val calendar = java.util.Calendar.getInstance()
+        calendar.time = now.toDate()
+        calendar.add(java.util.Calendar.DAY_OF_YEAR, challenge.durationInDays)
+        val endDate = com.google.firebase.Timestamp(calendar.time)
+
+        // Crear lista de tasks diarias a partir de los objectives
+        val tasksList = challenge.objectives.map { objective ->
+            mapOf(
+                "id" to objective.id,
+                "title" to objective.title,
+                "points" to objective.points,
+                "completed" to false,
+                "photoUrl" to null,
+                "comment" to null,
+                "location" to null
+            )
+        }
+
+        // Mapa completo del desafío activo
         val challengeMap = hashMapOf(
             "title" to challenge.title,
             "description" to challenge.description,
-            "objectives" to challenge.objectives,
             "status" to "ACTIVE",
-            "startedAt" to com.google.firebase.Timestamp.now(),
+            "startedAt" to now,
+            "endDate" to endDate,
+            "durationInDays" to challenge.durationInDays,
             "category" to challenge.category,
-            "imageUrl" to challenge.imageUrl
+            "imageUrl" to challenge.imageUrl,
+            "tasks" to tasksList
         )
 
         firestore.collection("users")
@@ -65,32 +96,46 @@ object PlaceholderContent {
             .addOnFailureListener { onError(it) }
     }
 
-    // Para agregar en el placeholder la informacion del challenge, en caso de acceder desde el mainActivity
 
     fun addItemFromDocument(document: DocumentSnapshot) {
+        val objectivesList = (document["objectives"] as? List<Map<String, Any>>)?.map { obj ->
+            Objective(
+                id = obj["id"] as? String ?: "",
+                title = obj["title"] as? String ?: "",
+                points = (obj["points"] as? Long)?.toInt() ?: 0
+            )
+        } ?: emptyList()
+
         val item = PlaceholderItem(
             id = document.id,
             title = document.getString("title") ?: "Sin título",
             description = document.getString("description") ?: "",
-            objectives = document.get("objectives") as? List<String> ?: emptyList(),
+            objectives = objectivesList,
             status = document.getString("status") ?: "INACTIVE",
             category = document.getString("category") ?: "",
-            imageUrl = document.getString("imageUrl")
+            imageUrl = document.getString("imageUrl"),
+            durationInDays = (document.getLong("durationInDays") ?: 0L).toInt()
         )
         ITEMS.add(item)
         ITEM_MAP[item.id] = item
     }
 
-
     data class PlaceholderItem(
         val id: String,
         val title: String,
         val description: String,
-        val objectives: List<String>,
+        val objectives: List<Objective>,
         val status: String,
         val category: String,
+        val durationInDays: Int,
         val imageUrl: String?
     ) {
         override fun toString(): String = title
     }
+
+    data class Objective(
+        val id: String,
+        val title: String,
+        val points: Int
+    )
 }

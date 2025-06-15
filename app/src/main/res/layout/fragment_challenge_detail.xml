@@ -86,8 +86,15 @@
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textStyle="italic"
                         android:textSize="22sp"
-                        android:textColor="@android:color/white"
-                        tools:text="Challenge description" />
+                        android:textColor="@android:color/white" />
+
+                    <TextView
+                        android:id="@+id/challenge_duration"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textSize="18sp"
+                        android:textColor="@android:color/white" />
 
                     <TextView
                         android:id="@+id/challenge_category"
@@ -112,12 +119,14 @@
             <!-- Card con los Objetivos -->
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/challenge_objectives_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 app:cardElevation="4dp"
                 app:cardCornerRadius="12dp"
-                app:cardBackgroundColor="@color/cardBackgroundDark">
+                app:cardBackgroundColor="@color/cardBackgroundDark"
+                android:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -143,6 +152,16 @@
                         android:layout_marginTop="8dp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- Contenedor de Cards individuales para cada objetivo (solo si ESTÁ aceptado) -->
+
+            <LinearLayout
+                android:id="@+id/accepted_objectives_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginBottom="16dp" />
 
             <!-- Botón para aceptar -->
 

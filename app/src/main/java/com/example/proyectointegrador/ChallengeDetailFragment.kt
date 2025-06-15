@@ -8,6 +8,9 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -96,29 +99,13 @@ class ChallengeDetailFragment : Fragment() {
         item?.let {
             binding.challengeDescription?.text = it.description
             binding.challengeCategory?.text = getString(R.string.challenge_category, it.category)
-            binding.challengeStatus?.text = getString(R.string.challenge_status, it.status)
-
-            //Cambio los colores del status segun si esta activo o inactivo
+            binding.challengeDuration?.text = getString(R.string.challenge_duration, it.durationInDays)
 
             val statusColor = when (it.status.uppercase()) {
                 "INACTIVE" -> R.color.red
                 else -> R.color.green
             }
-
             binding.challengeStatus?.setTextColor(ContextCompat.getColor(requireContext(), statusColor))
-
-            binding.challengeObjectivesContainer?.removeAllViews()
-            it.objectives.forEach { objetivo ->
-                val textView = TextView(requireContext()).apply {
-                    text = "✅ $objetivo"
-                    textSize = 16f
-                    setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
-                    setPadding(0, 4, 0, 4)
-                }
-                binding.challengeObjectivesContainer?.addView(textView)
-            }
-
-            //Se chequea si el usuario ya tiene aceptado este desafio
 
             val user = FirebaseAuth.getInstance().currentUser
             if (user != null) {
@@ -130,15 +117,111 @@ class ChallengeDetailFragment : Fragment() {
                     .get()
                     .addOnSuccessListener { doc ->
                         if (doc.exists()) {
+                            // Desafío aceptado
                             binding.acceptButton?.visibility = View.GONE
-                            binding.challengeStatus?.text = "Status: ACTIVE"
+                            binding.challengeStatus?.text = getString(R.string.challenge_status, "ACTIVE")
                             binding.challengeStatus?.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
+
+                            // Ocultamos la card vieja con el listado plano
+                            binding.challengeObjectivesCard?.visibility = View.GONE
+
+                            // Mostramos el contenedor nuevo
+                            binding.acceptedObjectivesContainer?.visibility = View.VISIBLE
+                            binding.acceptedObjectivesContainer?.removeAllViews()
+
+                            val savedTasks = doc["tasks"] as? List<Map<String, Any>> ?: emptyList()
+
+                            savedTasks.forEachIndexed { index, task ->
+                                val objetivoView = layoutInflater.inflate(R.layout.challenge_objective_item, binding.acceptedObjectivesContainer, false)
+
+                                val title = objetivoView.findViewById<TextView>(R.id.objective_title)
+                                val checkBox = objetivoView.findViewById<CheckBox>(R.id.objective_checkbox)
+                                val comment = objetivoView.findViewById<EditText>(R.id.objective_comment)
+                                val addPhotoButton = objetivoView.findViewById<Button>(R.id.button_add_photo)
+                                val imageView = objetivoView.findViewById<ImageView>(R.id.objective_image)
+                                val placeholderText = objetivoView.findViewById<TextView>(R.id.no_image_placeholder)
+                                val saveButton = objetivoView.findViewById<Button>(R.id.button_save)
+
+                                val taskTitle = task["title"] as? String ?: "Tarea"
+                                val points = (task["points"] as? Long)?.toInt() ?: 0
+                                val comentario = task["comment"] as? String ?: ""
+                                val completado = task["completed"] as? Boolean ?: false
+                                val photoUrl = task["photoUrl"] as? String
+
+                                title.text = "Tarea ${index + 1}"
+                                checkBox.text = "$taskTitle (+$points pts)"
+                                checkBox.isChecked = completado
+                                comment.setText(comentario)
+
+                                // Mostrar imagen si existe
+                                if (!photoUrl.isNullOrBlank()) {
+                                    placeholderText.visibility = View.GONE
+                                    imageView.visibility = View.VISIBLE
+                                    Glide.with(this).load(photoUrl).into(imageView)
+                                } else {
+                                    imageView.visibility = View.GONE
+                                    placeholderText.visibility = View.VISIBLE
+                                }
+
+                                addPhotoButton.setOnClickListener {
+                                    Toast.makeText(requireContext(), "Agregar foto para '$taskTitle'", Toast.LENGTH_SHORT).show()
+                                    // TODO: subir imagen
+                                }
+
+                                saveButton.setOnClickListener {
+                                    val nuevoComentario = comment.text.toString()
+                                    val nuevoEstado = checkBox.isChecked
+
+                                    // Guardar en Firestore
+                                    val newTask = task.toMutableMap()
+                                    newTask["comment"] = nuevoComentario
+                                    newTask["completed"] = nuevoEstado
+
+                                    // Reemplazar tarea en lista
+                                    val updatedTasks = savedTasks.toMutableList()
+                                    updatedTasks[index] = newTask
+
+                                    FirebaseFirestore.getInstance()
+                                        .collection("users")
+                                        .document(user.uid)
+                                        .collection("active_challenges")
+                                        .document(it.id.toString())
+                                        .update("tasks", updatedTasks)
+                                        .addOnSuccessListener {
+                                            Toast.makeText(requireContext(), "Guardado correctamente", Toast.LENGTH_SHORT).show()
+                                        }
+                                        .addOnFailureListener {
+                                            Toast.makeText(requireContext(), "Error al guardar", Toast.LENGTH_SHORT).show()
+                                        }
+                                }
+                                binding.acceptedObjectivesContainer?.addView(objetivoView)
+                            }
+
                         } else {
+                            // Desafío no aceptado
+
                             binding.acceptButton?.visibility = View.VISIBLE
+                            binding.challengeStatus?.text = getString(R.string.challenge_status, it.status)
+                            binding.challengeObjectivesLabel?.visibility = View.VISIBLE
+                            binding.challengeObjectivesContainer?.visibility = View.VISIBLE
+                            binding.acceptedObjectivesContainer?.visibility = View.GONE
+                            binding.challengeObjectivesContainer?.removeAllViews()
+
+                            it.objectives.forEach { objetivo ->
+                                val textView = TextView(requireContext()).apply {
+                                    text = "✅ ${objetivo.title} (+${objetivo.points} pts)"
+                                    textSize = 16f
+                                    setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
+                                    setPadding(0, 4, 0, 4)
+                                }
+                                binding.challengeObjectivesContainer?.addView(textView)
+                            }
+
                             binding.acceptButton?.setOnClickListener {
                                 guardarChallengeEnFirebase()
                             }
                         }
+
                         binding.loadingSpinner?.visibility = View.GONE
                         binding.challengeDetailScrollView?.visibility = View.VISIBLE
                     }
@@ -147,6 +230,8 @@ class ChallengeDetailFragment : Fragment() {
             }
         }
     }
+
+
 
     // Guardar el challenge en la coleccion del usuario
 

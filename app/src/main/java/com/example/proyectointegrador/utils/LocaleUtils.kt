@@ -16,5 +16,3 @@ fun updateLocale(context: Context, languageCode: String) {
     resources.updateConfiguration(config, resources.displayMetrics)
 }
 
-
-

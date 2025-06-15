@@ -69,4 +69,3 @@ class PreferencesFragment : Fragment() {
         }
     }
 }
-

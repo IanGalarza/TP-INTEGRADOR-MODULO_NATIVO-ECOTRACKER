@@ -50,4 +50,6 @@
     <string name="select_language_first">Seleccioná un idioma primero</string>
     <string name="language_selected">Idioma seleccionado: %1$s</string>
     <string name="no_changes">No se realizaron cambios</string>
+    <string name="challenge_duration">Duración: %1$d días</string>
+    <string name="no_image">Sin imagen</string>
 </resources>
