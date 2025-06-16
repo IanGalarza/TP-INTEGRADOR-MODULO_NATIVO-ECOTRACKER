@@ -8,17 +8,7 @@
     android:layout_height="match_parent"
     tools:context=".History.HistoryActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/aqua_green"
-        android:elevation="4dp"
-        app:title="History"
-        app:titleTextColor="@android:color/black"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+
 
     <!-- Fragments -->
 
@@ -29,6 +19,7 @@
         android:background="@color/aqua_green"
         app:menu="@menu/bottom_nav_menu"
         app:labelVisibilityMode="labeled"
+        app:itemIconSize="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

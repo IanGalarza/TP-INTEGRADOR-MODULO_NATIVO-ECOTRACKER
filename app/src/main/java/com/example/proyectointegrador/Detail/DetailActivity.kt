@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.proyectointegrador.BottomNavigationBaseActivity
 import com.example.proyectointegrador.ChallengeDetailFragment
 import com.example.proyectointegrador.MainActivity
 import com.example.proyectointegrador.ChallengeDetailHostActivity
@@ -24,24 +25,19 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import java.util.Locale
 
-class DetailActivity : AppCompatActivity() {
+class DetailActivity : BottomNavigationBaseActivity() {
+    override val currentMenuItemId: Int = R.id.action_challenges
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_detail)
-
+        setupBottomNavigation()
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        // Configurar toolbar
-
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = getString(R.string.title_challenge_detail)
 
         if (savedInstanceState == null) {
             val challengeId = intent.getStringExtra("challengeId")
@@ -57,37 +53,6 @@ class DetailActivity : AppCompatActivity() {
                 .commit()
         }
 
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.action_home -> {
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
-                    true
-                }
-                R.id.action_challenges -> {
-                    startActivity(Intent(this, ChallengeDetailHostActivity::class.java))
-                    finish()
-                    true
-                }
-                R.id.action_ranking -> {
-                    startActivity(Intent(this, RankingActivity::class.java))
-                    finish()
-                    true
-                }
-                R.id.action_history -> {
-                    startActivity(Intent(this, HistoryActivity::class.java))
-                    finish()
-                    true
-                }
-                R.id.action_profile -> {
-                    startActivity(Intent(this, ProfileActivity::class.java))
-                    finish()
-                    true
-                }
-                else -> false
-            }
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

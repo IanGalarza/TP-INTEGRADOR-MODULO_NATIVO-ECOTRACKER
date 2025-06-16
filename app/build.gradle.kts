@@ -55,9 +55,11 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.firebase.firestore.ktx)
-
+    implementation(libs.kotlin.url.gen)
+    implementation(libs.okhttp3.okhttp)
     implementation("com.github.bumptech.glide:glide:4.16.0")
     kapt("com.github.bumptech.glide:compiler:4.16.0")
+    implementation("com.google.android.gms:play-services-location:21.1.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
