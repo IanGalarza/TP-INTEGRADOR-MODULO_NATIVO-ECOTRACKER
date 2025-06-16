@@ -37,10 +37,13 @@ import android.location.Location
 import androidx.core.app.ActivityCompat
 import android.content.pm.PackageManager
 import android.Manifest
+import android.widget.ProgressBar
 
 class ChallengeDetailFragment : Fragment() {
 
     private var item: PlaceholderContent.PlaceholderItem? = null
+    private val CAMERA_PERMISSION_CODE = 2001
+
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var userLocation: Location? = null
@@ -50,6 +53,7 @@ class ChallengeDetailFragment : Fragment() {
     private var currentTaskIndexForPhoto: Int? = null
     private var currentPhotoTempFile: File? = null
     private var imageUrl: String? = null
+    private val pendingPhotoUris: MutableMap<Int, Uri> = mutableMapOf()
 
     private val pickPhotoFromGallery = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         uri?.let { uploadPhotoAndAttachToTask(it, fromCamera = false) }
@@ -81,6 +85,19 @@ class ChallengeDetailFragment : Fragment() {
         }
         true
     }
+
+    private val requestCameraPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            openCamera(currentTaskIndexForPhoto ?: 0)
+        } else {
+            Toast.makeText(requireContext(), "Se requiere permiso de cámara para tomar fotos.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -211,8 +228,6 @@ class ChallengeDetailFragment : Fragment() {
                                 checkBox.isChecked = completado
                                 comment.setText(comentario)
 
-                                // Mostrar imagen si existe
-
                                 if (!photoUrl.isNullOrBlank()) {
                                     placeholderText.visibility = View.GONE
                                     imageView.visibility = View.VISIBLE
@@ -227,37 +242,56 @@ class ChallengeDetailFragment : Fragment() {
                                 }
 
                                 saveButton.setOnClickListener {
+                                    val saveLoader = objetivoView.findViewById<ProgressBar>(R.id.save_loader)
+                                    saveButton.visibility = View.GONE
+                                    saveLoader.visibility = View.VISIBLE
+                                    val uriFotoPendiente = pendingPhotoUris[index]
                                     val nuevoComentario = comment.text.toString()
                                     val nuevoEstado = checkBox.isChecked
 
-                                    // Guardar en Firestore
                                     val newTask = task.toMutableMap()
                                     newTask["comment"] = nuevoComentario
                                     newTask["completed"] = nuevoEstado
-                                    if(imageUrl != null){
-                                        newTask["photoUrl"] = imageUrl.toString()
-                                    }
                                     userLocation?.let { location ->
                                         val locMap = mapOf("lat" to location.latitude, "lng" to location.longitude)
                                         newTask["location"] = locMap
                                     }
 
-                                    // Reemplazar tarea en lista
-                                    val updatedTasks = savedTasks.toMutableList()
-                                    updatedTasks[index] = newTask
+                                    fun guardarEnFirestore(photoUrl: String? = null) {
+                                        if (photoUrl != null) newTask["photoUrl"] = photoUrl
+                                        val updatedTasks = savedTasks.toMutableList()
+                                        updatedTasks[index] = newTask
 
-                                    FirebaseFirestore.getInstance()
-                                        .collection("users")
-                                        .document(user.uid)
-                                        .collection("active_challenges")
-                                        .document(challengeId)
-                                        .update("tasks", updatedTasks)
-                                        .addOnSuccessListener {
-                                            Toast.makeText(requireContext(), "Guardado correctamente", Toast.LENGTH_SHORT).show()
+                                        FirebaseFirestore.getInstance()
+                                            .collection("users")
+                                            .document(user.uid)
+                                            .collection("active_challenges")
+                                            .document(challengeId)
+                                            .update("tasks", updatedTasks)
+                                            .addOnSuccessListener {
+                                                saveButton.visibility = View.VISIBLE
+                                                saveLoader.visibility = View.GONE
+                                                Toast.makeText(requireContext(), "Guardado correctamente", Toast.LENGTH_SHORT).show()
+                                                pendingPhotoUris.remove(index)
+
+                                            }
+                                            .addOnFailureListener {
+                                                saveButton.visibility = View.VISIBLE
+                                                saveLoader.visibility = View.GONE
+                                                Toast.makeText(requireContext(), "Error al guardar", Toast.LENGTH_SHORT).show()
+                                            }
+                                    }
+                                    if (uriFotoPendiente != null) {
+                                        subirFotoACloudinary(uriFotoPendiente) { cloudUrl ->
+                                            if (cloudUrl == null) {
+                                                Toast.makeText(requireContext(), "Error al subir la imagen", Toast.LENGTH_SHORT).show()
+                                            } else {
+                                                guardarEnFirestore(cloudUrl)
+                                            }
                                         }
-                                        .addOnFailureListener {
-                                            Toast.makeText(requireContext(), "Error al guardar", Toast.LENGTH_SHORT).show()
-                                        }
+                                    } else {
+                                        guardarEnFirestore()
+                                    }
                                 }
                                 binding.acceptedObjectivesContainer?.addView(objetivoView)
                             }
@@ -305,40 +339,61 @@ class ChallengeDetailFragment : Fragment() {
             .setItems(options) { _, which ->
                 when (which) {
                     0 -> pickPhotoFromGallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                    1 -> {
-                        val tempFile = File.createTempFile("IMG_${UUID.randomUUID()}", ".jpg", requireContext().cacheDir)
-                        currentPhotoTempFile = tempFile
-                        val photoUri = FileProvider.getUriForFile(
-                            requireContext(),
-                            "${requireContext().packageName}.provider",
-                            tempFile
-                        )
-                        takePhotoFromCamera.launch(photoUri)
-                    }
+                    1 -> checkCameraPermissionAndOpen(forTaskIndex)
                 }
             }
             .setNegativeButton("Cancelar", null)
             .show()
     }
-    private fun uploadPhotoAndAttachToTask(uri: Uri, fromCamera: Boolean) {
 
-        Toast.makeText(requireContext(), "Subiendo imagen...", Toast.LENGTH_SHORT).show()
+    private fun checkCameraPermissionAndOpen(forTaskIndex: Int) {
+        currentTaskIndexForPhoto = forTaskIndex
+        when {
+            ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED -> {
+                openCamera(forTaskIndex)
+            }
+            shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) -> {
+                requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+            }
+            else -> {
+                requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+            }
+        }
+    }
 
-        val context = requireContext()
-        val file = if (fromCamera) {
-            currentPhotoTempFile
-        } else {
-            val inputStream = context.contentResolver.openInputStream(uri)
-            val tempFile = File.createTempFile("IMG_${UUID.randomUUID()}", ".jpg", context.cacheDir)
-            tempFile.outputStream().use { fileOut -> inputStream?.copyTo(fileOut) }
+    private fun openCamera(forTaskIndex: Int) {
+        val tempFile = File.createTempFile("IMG_${UUID.randomUUID()}", ".jpg", requireContext().cacheDir)
+        currentPhotoTempFile = tempFile
+        val photoUri = FileProvider.getUriForFile(
+            requireContext(),
+            "${requireContext().packageName}.provider",
             tempFile
-        }
+        )
+        takePhotoFromCamera.launch(photoUri)
+    }
 
-        if (file == null || !file.exists()) {
-            Toast.makeText(requireContext(), "No se pudo obtener la imagen", Toast.LENGTH_SHORT).show()
-            return
-        }
 
+    private fun uploadPhotoAndAttachToTask(uri: Uri, fromCamera: Boolean) {
+        val taskIndex = currentTaskIndexForPhoto ?: return
+        pendingPhotoUris[taskIndex] = uri
+
+        val container = binding.acceptedObjectivesContainer
+        val objetivoView = container?.getChildAt(taskIndex)
+        val imageView = objetivoView?.findViewById<ImageView>(R.id.objective_image)
+        val placeholderText = objetivoView?.findViewById<TextView>(R.id.no_image_placeholder)
+
+        if (imageView != null && placeholderText != null) {
+            placeholderText.visibility = View.GONE
+            imageView.visibility = View.VISIBLE
+            Glide.with(this).load(uri).into(imageView)
+        }
+    }
+
+    private fun subirFotoACloudinary(uri: Uri, onResult: (String?) -> Unit) {
+        val context = requireContext()
+        val inputStream = context.contentResolver.openInputStream(uri)
+        val tempFile = File.createTempFile("IMG_${UUID.randomUUID()}", ".jpg", context.cacheDir)
+        tempFile.outputStream().use { fileOut -> inputStream?.copyTo(fileOut) }
 
         val cloudName = "dywphbg73"
         val uploadPreset = "unsigned_challenges"
@@ -347,7 +402,7 @@ class ChallengeDetailFragment : Fragment() {
 
         val requestBody = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
-            .addFormDataPart("file", file.name, file.asRequestBody("image/*".toMediaTypeOrNull()))
+            .addFormDataPart("file", tempFile.name, tempFile.asRequestBody("image/*".toMediaTypeOrNull()))
             .addFormDataPart("upload_preset", uploadPreset)
             .addFormDataPart("folder", "folder/appsmoviles")
             .build()
@@ -357,30 +412,26 @@ class ChallengeDetailFragment : Fragment() {
             .post(requestBody)
             .build()
 
-
         Thread {
             try {
                 val response = client.newCall(request).execute()
                 val responseBody = response.body?.string()
-                if (!response.isSuccessful || responseBody == null) {
-                    requireActivity().runOnUiThread {
-                        Toast.makeText(context, "Error al subir la foto", Toast.LENGTH_SHORT).show()
-                    }
-                    return@Thread
-                }
-
                 val urlRegex = """"secure_url"\s*:\s*"([^"]+)"""".toRegex()
-                val urlMatch = urlRegex.find(responseBody)
-                imageUrl = urlMatch?.groups?.get(1)?.value
+                val urlMatch = urlRegex.find(responseBody ?: "")
+                val imageUrl = urlMatch?.groups?.get(1)?.value
+                requireActivity().runOnUiThread {
+                    onResult(imageUrl)
+                }
             } catch (e: Exception) {
                 requireActivity().runOnUiThread {
-                    Toast.makeText(context, "Error al subir imagen", Toast.LENGTH_SHORT).show()
+                    onResult(null)
                 }
             } finally {
-                if (fromCamera) file.delete()
+                tempFile.delete()
             }
         }.start()
     }
+
 
 
     private fun guardarChallengeEnFirebase() {
