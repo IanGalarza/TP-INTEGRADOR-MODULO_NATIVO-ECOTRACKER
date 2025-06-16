@@ -67,4 +67,15 @@
     <string name="confirm_save_message">Do you want to save the progress?</string>
     <string name="confirm_complete_title">Confirm Completion</string>
     <string name="confirm_save_title">Save Progress</string>
+    <string name="cancel_challenge_title">Cancel challenge?</string>
+    <string name="cancel_challenge_message">Are you sure you want to cancel this challenge? It cannot be recovered.</string>
+    <string name="challenge_cancelled">Challenge cancelled</string>
+    <string name="cancel_error">Failed to cancel the challenge</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="reactivate_challenge_title">Reactivate challenge</string>
+    <string name="reactivate_challenge_message">Do you want to reactivate this challenge to edit it again?</string>
+    <string name="challenge_reactivated">Challenge successfully reactivated</string>
+    <string name="reactivate_error">Error reactivating the challenge</string>
+    <string name="reactivate">Reactivate</string>
 </resources>

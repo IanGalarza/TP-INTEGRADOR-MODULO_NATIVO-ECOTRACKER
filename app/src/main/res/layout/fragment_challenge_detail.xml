@@ -203,6 +203,38 @@
                 android:layout_marginBottom="16dp"
                 android:padding="12dp"
                 style="@style/Widget.MaterialComponents.Button" />
+
+            <!-- Botón para cancelar -->
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/cancel_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/red"
+                android:layout_marginBottom="16dp"
+                android:padding="12dp"
+                android:visibility="gone"
+                style="@style/Widget.MaterialComponents.Button" />
+
+            <!-- Botón para reactivar -->
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/reactivateButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/reactivate"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:backgroundTint="?attr/colorPrimary"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:padding="12dp"
+                android:visibility="gone"
+                style="@style/Widget.MaterialComponents.Button" />
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

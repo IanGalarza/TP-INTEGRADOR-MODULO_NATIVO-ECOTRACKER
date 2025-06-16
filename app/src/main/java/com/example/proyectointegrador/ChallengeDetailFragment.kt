@@ -159,7 +159,8 @@ class ChallengeDetailFragment : Fragment() {
             binding.challengeDuration?.text = getString(R.string.challenge_duration, it.durationInDays)
 
             val statusColor = when (it.status.uppercase()) {
-                "INACTIVE" -> R.color.red
+                "INACTIVE", "CANCELLED" -> R.color.red
+                "ACTIVE" -> R.color.green
                 else -> R.color.green
             }
             binding.challengeStatus?.setTextColor(ContextCompat.getColor(requireContext(), statusColor))
@@ -178,9 +179,15 @@ class ChallengeDetailFragment : Fragment() {
                             // Desafío aceptado
 
                             binding.acceptButton?.visibility = View.GONE
-                            val savedStatus = doc.getString("status") ?: "ACTIVE"
+                            val savedStatus = doc.getString("status") ?: "UNDEFINED"
                             binding.challengeStatus?.text = getString(R.string.challenge_status, savedStatus)
-                            binding.challengeStatus?.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
+
+                            val dynamicStatusColor = when (savedStatus.uppercase()) {
+                                "INACTIVE", "CANCELLED" -> R.color.red
+                                "ACTIVE" -> R.color.green
+                                else -> R.color.green
+                            }
+                            binding.challengeStatus?.setTextColor(ContextCompat.getColor(requireContext(), dynamicStatusColor))
 
                             // Se oculta la card con los objetivos planos
 
@@ -190,6 +197,67 @@ class ChallengeDetailFragment : Fragment() {
 
                             binding.acceptedObjectivesContainer?.visibility = View.VISIBLE
                             binding.acceptedObjectivesContainer?.removeAllViews()
+
+                            // Mostrar botón de cancelar solo si el estado es ACTIVO
+                            binding.cancelButton?.visibility = if (savedStatus == "ACTIVE") View.VISIBLE else View.GONE
+
+                            // Mostrar boton de Reactivar solo si el estado es CANCELLED
+
+                            binding.reactivateButton?.visibility = if (savedStatus == "CANCELLED") View.VISIBLE else View.GONE
+
+                            // Boton para cancelar
+
+                            binding.cancelButton?.setOnClickListener {
+                                AlertDialog.Builder(requireContext())
+                                    .setTitle(getString(R.string.cancel_challenge_title))
+                                    .setMessage(getString(R.string.cancel_challenge_message))
+                                    .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+                                        dialog.dismiss()
+
+                                        FirebaseFirestore.getInstance()
+                                            .collection("users")
+                                            .document(user.uid)
+                                            .collection("active_challenges")
+                                            .document(challengeId)
+                                            .update("status", "CANCELLED")
+                                            .addOnSuccessListener {
+                                                Toast.makeText(requireContext(), getString(R.string.challenge_cancelled), Toast.LENGTH_SHORT).show()
+                                                updateContent() // Recargar la UI
+                                            }
+                                            .addOnFailureListener {
+                                                Toast.makeText(requireContext(), getString(R.string.cancel_error), Toast.LENGTH_SHORT).show()
+                                            }
+                                    }
+                                    .setNegativeButton(getString(R.string.cancel), null)
+                                    .show()
+                            }
+
+                            // Boton para Reactivar
+
+                            binding.reactivateButton?.setOnClickListener {
+                                AlertDialog.Builder(requireContext())
+                                    .setTitle(getString(R.string.reactivate_challenge_title))
+                                    .setMessage(getString(R.string.reactivate_challenge_message))
+                                    .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+                                        dialog.dismiss()
+
+                                        FirebaseFirestore.getInstance()
+                                            .collection("users")
+                                            .document(user.uid)
+                                            .collection("active_challenges")
+                                            .document(challengeId)
+                                            .update("status", "ACTIVE")
+                                            .addOnSuccessListener {
+                                                Toast.makeText(requireContext(), getString(R.string.challenge_reactivated), Toast.LENGTH_SHORT).show()
+                                                updateContent() // Recargar la UI
+                                            }
+                                            .addOnFailureListener {
+                                                Toast.makeText(requireContext(), getString(R.string.reactivate_error), Toast.LENGTH_SHORT).show()
+                                            }
+                                    }
+                                    .setNegativeButton(getString(R.string.cancel), null)
+                                    .show()
+                            }
 
                             val savedTasks = doc["tasks"] as? List<Map<String, Any>> ?: emptyList()
 
@@ -231,7 +299,9 @@ class ChallengeDetailFragment : Fragment() {
                                 checkBox.isChecked = completado
                                 comment.setText(comentario)
 
-                                if (completado) {
+                                val disableEditing = completado || savedStatus.uppercase() == "CANCELLED"
+
+                                if (disableEditing) {
                                     checkBox.isEnabled = false
                                     comment.isEnabled = false
                                     addPhotoButton.visibility = View.GONE

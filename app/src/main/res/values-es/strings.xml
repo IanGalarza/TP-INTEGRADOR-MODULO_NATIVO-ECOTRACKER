@@ -67,4 +67,15 @@
     <string name="saved_success">Guardado correctamente</string>
     <string name="saved_error">Error al guardar</string>
     <string name="upload_error">Error al subir la imagen</string>
+    <string name="cancel_challenge_title">¿Cancelar desafío?</string>
+    <string name="cancel_challenge_message">¿Estás seguro de que querés cancelar este desafío? No se podrá recuperar.</string>
+    <string name="challenge_cancelled">Desafío cancelado</string>
+    <string name="cancel_error">No se pudo cancelar el desafío</string>
+    <string name="no">No</string>
+    <string name="yes">Sí</string>
+    <string name="reactivate_challenge_title">Reactivar desafio</string>
+    <string name="reactivate_challenge_message">¿Querés reactivar este desafio para poder editarlo nuevamente?</string>
+    <string name="challenge_reactivated">Desafio reactivado con éxito</string>
+    <string name="reactivate_error">Error al reactivar el desafio</string>
+    <string name="reactivate">Reactivar</string>
 </resources>
