@@ -35,7 +35,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.util.Locale
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BottomNavigationBaseActivity() {
+    override val currentMenuItemId: Int = R.id.action_home
 
     private lateinit var auth: FirebaseAuth
     private lateinit var welcomeTextView: TextView
@@ -51,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+        setupBottomNavigation()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -71,32 +73,7 @@ class MainActivity : AppCompatActivity() {
         rankingCard = findViewById(R.id.ranking_card)
         historyCard = findViewById(R.id.history_card)
 
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
 
-        bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.action_home -> {
-                    true
-                }
-                R.id.action_challenges -> {
-                    startActivity(Intent(this, ChallengeDetailHostActivity::class.java))
-                    true
-                }
-                R.id.action_profile -> {
-                    startActivity(Intent(this, ProfileActivity::class.java))
-                    true
-                }
-                R.id.action_ranking -> {
-                    startActivity(Intent(this, RankingActivity::class.java))
-                    true
-                }
-                R.id.action_history -> {
-                    startActivity(Intent(this, HistoryActivity::class.java))
-                    true
-                }
-                else -> false
-            }
-        }
 
 
         challengesCard.setOnClickListener {

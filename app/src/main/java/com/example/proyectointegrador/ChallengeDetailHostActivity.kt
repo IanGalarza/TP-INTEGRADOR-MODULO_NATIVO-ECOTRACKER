@@ -27,7 +27,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.util.Locale
 
 
-class ChallengeDetailHostActivity : AppCompatActivity() {
+class ChallengeDetailHostActivity : BottomNavigationBaseActivity() {
+    override val currentMenuItemId: Int = R.id.action_challenges
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityChallengeDetailBinding
@@ -39,61 +40,24 @@ class ChallengeDetailHostActivity : AppCompatActivity() {
 
         binding = ActivityChallengeDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        setupBottomNavigation()
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        setSupportActionBar(binding.toolbar)
+
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment_challenge_detail) as NavHostFragment
         val navController = navHostFragment.navController
 
-        appBarConfiguration = AppBarConfiguration(setOf(R.id.challenge_list_fragment))
-        setupActionBarWithNavController(navController, appBarConfiguration)
+
 
         auth = Firebase.auth
 
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        bottomNav.selectedItemId = R.id.action_challenges
 
-        bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.action_home -> {
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
-                    true
-                }
-                R.id.action_challenges -> {
-                    true
-                }
-                R.id.action_ranking -> {
-                    startActivity(Intent(this, RankingActivity::class.java))
-                    finish()
-                    true
-                }
-                R.id.action_history -> {
-                    startActivity(Intent(this, HistoryActivity::class.java))
-                    finish()
-                    true
-                }
-                R.id.action_profile -> {
-                    startActivity(Intent(this, ProfileActivity::class.java))
-                    finish()
-                    true
-                }
-                R.id.action_logout -> {
-                    auth.signOut()
-                    startActivity(Intent(this, AuthActivity::class.java))
-                    finish()
-                    true
-                }
-                else -> false
-            }
-        }
 
     }
 
