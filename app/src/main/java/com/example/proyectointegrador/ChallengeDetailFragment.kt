@@ -20,13 +20,49 @@ import com.example.proyectointegrador.databinding.FragmentChallengeDetailBinding
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import android.net.Uri
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
+import androidx.appcompat.app.AlertDialog
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
+import java.io.FileInputStream
+import java.util.UUID
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import android.location.Location
+import androidx.core.app.ActivityCompat
+import android.content.pm.PackageManager
+import android.Manifest
 
 class ChallengeDetailFragment : Fragment() {
 
     private var item: PlaceholderContent.PlaceholderItem? = null
 
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var userLocation: Location? = null
+
     //lateinit var itemDetailTextView: TextView
-    private var toolbarLayout: CollapsingToolbarLayout? = null
+
+    private var currentTaskIndexForPhoto: Int? = null
+    private var currentPhotoTempFile: File? = null
+    private var imageUrl: String? = null
+
+    private val pickPhotoFromGallery = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        uri?.let { uploadPhotoAndAttachToTask(it, fromCamera = false) }
+    }
+
+    private val takePhotoFromCamera = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success && currentPhotoTempFile != null) {
+            val uri = Uri.fromFile(currentPhotoTempFile)
+            uploadPhotoAndAttachToTask(uri, fromCamera = true)
+        } else {
+            currentPhotoTempFile?.delete()
+        }
+    }
 
     private var _binding: FragmentChallengeDetailBinding? = null
 
@@ -45,6 +81,8 @@ class ChallengeDetailFragment : Fragment() {
         }
         true
     }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,13 +105,16 @@ class ChallengeDetailFragment : Fragment() {
         _binding = FragmentChallengeDetailBinding.inflate(inflater, container, false)
         val rootView = binding.root
 
-        toolbarLayout = binding.toolbarLayout
+
         //itemDetailTextView = binding.challengeDetail
         headerImageView = binding.headerImage!!
 
         // Carga los datos del desafio
         updateContent()
         rootView.setOnDragListener(dragListener)
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        solicitarUbicacion() // <- agregá esto
 
         // Aceptar el desafio
         binding.acceptButton?.setOnClickListener {
@@ -85,7 +126,7 @@ class ChallengeDetailFragment : Fragment() {
     }
 
     private fun updateContent() {
-        toolbarLayout?.title = item?.title
+
 
         binding.loadingSpinner?.visibility = View.VISIBLE
         binding.challengeDetailScrollView?.visibility = View.GONE
@@ -95,7 +136,7 @@ class ChallengeDetailFragment : Fragment() {
                 .load(imageUrl)
                 .into(headerImageView)
         }
-
+        val challengeId = item?.id ?: return
         item?.let {
             binding.challengeDescription?.text = it.description
             binding.challengeCategory?.text = getString(R.string.challenge_category, it.category)
@@ -185,8 +226,7 @@ class ChallengeDetailFragment : Fragment() {
                                 }
 
                                 addPhotoButton.setOnClickListener {
-                                    Toast.makeText(requireContext(), "Agregar foto para '$taskTitle'", Toast.LENGTH_SHORT).show()
-                                    // TODO: subir imagen
+                                    showPhotoSourceDialog(index)
                                 }
 
                                 saveButton.setOnClickListener {
@@ -197,6 +237,13 @@ class ChallengeDetailFragment : Fragment() {
                                     val newTask = task.toMutableMap()
                                     newTask["comment"] = nuevoComentario
                                     newTask["completed"] = nuevoEstado
+                                    if(imageUrl != null){
+                                        newTask["photoUrl"] = imageUrl.toString()
+                                    }
+                                    userLocation?.let { location ->
+                                        val locMap = mapOf("lat" to location.latitude, "lng" to location.longitude)
+                                        newTask["location"] = locMap
+                                    }
 
                                     // Reemplazar tarea en lista
                                     val updatedTasks = savedTasks.toMutableList()
@@ -206,7 +253,7 @@ class ChallengeDetailFragment : Fragment() {
                                         .collection("users")
                                         .document(user.uid)
                                         .collection("active_challenges")
-                                        .document(it.id.toString())
+                                        .document(challengeId)
                                         .update("tasks", updatedTasks)
                                         .addOnSuccessListener {
                                             Toast.makeText(requireContext(), "Guardado correctamente", Toast.LENGTH_SHORT).show()
@@ -254,7 +301,93 @@ class ChallengeDetailFragment : Fragment() {
 
 
 
-    // Guardar el challenge en la coleccion del usuario
+
+    private fun showPhotoSourceDialog(forTaskIndex: Int) {
+        currentTaskIndexForPhoto = forTaskIndex
+
+        val options = arrayOf("Galería", "Cámara")
+        AlertDialog.Builder(requireContext())
+            .setTitle("Seleccionar fuente")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> pickPhotoFromGallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                    1 -> {
+                        val tempFile = File.createTempFile("IMG_${UUID.randomUUID()}", ".jpg", requireContext().cacheDir)
+                        currentPhotoTempFile = tempFile
+                        val photoUri = FileProvider.getUriForFile(
+                            requireContext(),
+                            "${requireContext().packageName}.provider",
+                            tempFile
+                        )
+                        takePhotoFromCamera.launch(photoUri)
+                    }
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+    private fun uploadPhotoAndAttachToTask(uri: Uri, fromCamera: Boolean) {
+
+        Toast.makeText(requireContext(), "Subiendo imagen...", Toast.LENGTH_SHORT).show()
+
+        val context = requireContext()
+        val file = if (fromCamera) {
+            currentPhotoTempFile
+        } else {
+            val inputStream = context.contentResolver.openInputStream(uri)
+            val tempFile = File.createTempFile("IMG_${UUID.randomUUID()}", ".jpg", context.cacheDir)
+            tempFile.outputStream().use { fileOut -> inputStream?.copyTo(fileOut) }
+            tempFile
+        }
+
+        if (file == null || !file.exists()) {
+            Toast.makeText(requireContext(), "No se pudo obtener la imagen", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+
+        val cloudName = "dywphbg73"
+        val uploadPreset = "unsigned_challenges"
+        val url = "https://api.cloudinary.com/v1_1/$cloudName/image/upload"
+        val client = OkHttpClient()
+
+        val requestBody = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("file", file.name, file.asRequestBody("image/*".toMediaTypeOrNull()))
+            .addFormDataPart("upload_preset", uploadPreset)
+            .addFormDataPart("folder", "folder/appsmoviles")
+            .build()
+
+        val request = Request.Builder()
+            .url(url)
+            .post(requestBody)
+            .build()
+
+
+        Thread {
+            try {
+                val response = client.newCall(request).execute()
+                val responseBody = response.body?.string()
+                if (!response.isSuccessful || responseBody == null) {
+                    requireActivity().runOnUiThread {
+                        Toast.makeText(context, "Error al subir la foto", Toast.LENGTH_SHORT).show()
+                    }
+                    return@Thread
+                }
+
+                val urlRegex = """"secure_url"\s*:\s*"([^"]+)"""".toRegex()
+                val urlMatch = urlRegex.find(responseBody)
+                imageUrl = urlMatch?.groups?.get(1)?.value
+            } catch (e: Exception) {
+                requireActivity().runOnUiThread {
+                    Toast.makeText(context, "Error al subir imagen", Toast.LENGTH_SHORT).show()
+                }
+            } finally {
+                if (fromCamera) file.delete()
+            }
+        }.start()
+    }
+
 
     private fun guardarChallengeEnFirebase() {
         val user = FirebaseAuth.getInstance().currentUser
@@ -285,5 +418,35 @@ class ChallengeDetailFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun solicitarUbicacion() {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationClient.getCurrentLocation(
+                com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY,
+                null
+            ).addOnSuccessListener { location: Location? ->
+                userLocation = location
+            }.addOnFailureListener {
+                userLocation = null
+            }
+        } else {
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 101)
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 101 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            solicitarUbicacion()
+        }
     }
 }

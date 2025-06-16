@@ -9,17 +9,7 @@
     tools:context=".profile.ProfileActivity"
     android:fitsSystemWindows="true">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/aqua_green"
-        android:elevation="4dp"
-        app:title="Profile"
-        app:titleTextColor="@android:color/black"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/profile_fragment_container"
@@ -28,7 +18,7 @@
         android:layout_height="0dp"
         app:defaultNavHost="true"
         app:navGraph="@navigation/profile_nav_graph"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -40,6 +30,7 @@
         android:background="@color/aqua_green"
         app:menu="@menu/bottom_nav_menu"
         app:labelVisibilityMode="labeled"
+        app:itemIconSize="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

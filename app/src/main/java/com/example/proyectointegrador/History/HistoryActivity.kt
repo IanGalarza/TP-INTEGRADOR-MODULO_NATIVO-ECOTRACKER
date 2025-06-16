@@ -21,54 +21,21 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import java.util.Locale
 
-class HistoryActivity : AppCompatActivity() {
+class HistoryActivity : BottomNavigationBaseActivity() {
+    override val currentMenuItemId: Int = R.id.action_history
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_history)
-
+        setupBottomNavigation()
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = getString(R.string.history)
 
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        bottomNav.selectedItemId = R.id.action_history
-        bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.action_home -> {
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
-                    true
-                }
-                R.id.action_challenges -> {
-                    startActivity(Intent(this, ChallengeDetailHostActivity::class.java))
-                    finish()
-                    true
-                }
-                R.id.action_ranking -> {
-                    startActivity(Intent(this, RankingActivity::class.java))
-                    finish()
-                    true
-                }
-                R.id.action_history -> {
-                    // Ya estás en history, no hagas nada
-                    true
-                }
-                R.id.action_profile -> {
-                    startActivity(Intent(this, ProfileActivity::class.java))
-                    finish()
-                    true
-                }
-                else -> false
-            }
-        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
