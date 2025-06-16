@@ -7,17 +7,11 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.proyectointegrador.BottomNavigationBaseActivity
 import com.example.proyectointegrador.R
 import com.example.proyectointegrador.auth.AuthActivity
-import com.example.proyectointegrador.MainActivity
-import com.example.proyectointegrador.profile.ProfileActivity
-import com.example.proyectointegrador.ChallengeDetailHostActivity
-import com.example.proyectointegrador.History.HistoryActivity
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import java.util.Locale

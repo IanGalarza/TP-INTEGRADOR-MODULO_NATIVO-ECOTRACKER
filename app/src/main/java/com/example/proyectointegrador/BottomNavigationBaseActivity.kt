@@ -1,9 +1,8 @@
 package com.example.proyectointegrador
 
 import android.content.Intent
-import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.proyectointegrador.History.HistoryActivity
+import com.example.proyectointegrador.history.HistoryActivity
 import com.example.proyectointegrador.profile.ProfileActivity
 import com.example.proyectointegrador.ranking.RankingActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView

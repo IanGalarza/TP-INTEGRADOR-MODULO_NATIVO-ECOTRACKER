@@ -1,4 +1,4 @@
-package com.example.proyectointegrador.History
+package com.example.proyectointegrador.history
 
 import android.content.Context
 import android.content.Intent
@@ -6,17 +6,11 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.proyectointegrador.*
-
 import com.example.proyectointegrador.auth.AuthActivity
-import com.example.proyectointegrador.profile.ProfileActivity
-import com.example.proyectointegrador.ranking.RankingActivity
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import java.util.Locale
@@ -33,9 +27,6 @@ class HistoryActivity : BottomNavigationBaseActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

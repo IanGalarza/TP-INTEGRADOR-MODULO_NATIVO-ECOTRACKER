@@ -63,6 +63,32 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- Card con el Título del Challenge -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/challenge_title_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardElevation="4dp"
+                app:cardCornerRadius="12dp"
+                app:cardBackgroundColor="@color/cardBackgroundDark">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/challenge_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="26sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/aqua_green" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <!-- Card con Información general -->
 
             <com.google.android.material.card.MaterialCardView

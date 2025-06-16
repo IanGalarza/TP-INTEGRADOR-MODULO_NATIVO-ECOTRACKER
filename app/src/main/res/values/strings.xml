@@ -55,4 +55,5 @@
     <string name="task_number">Task %1$d</string>
     <string name="save">Save</string>
     <string name="additional_comment">Additional Comment</string>
+    <string name="no_challenges_found">No challenges found.</string>
 </resources>

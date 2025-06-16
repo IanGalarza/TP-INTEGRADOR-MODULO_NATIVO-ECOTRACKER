@@ -55,4 +55,5 @@
     <string name="task_number">Tarefa %1$d</string>
     <string name="save">Salvar</string>
     <string name="additional_comment">Comentário adicional</string>
+    <string name="no_challenges_found">Nenhum desafio encontrado.</string>
 </resources>

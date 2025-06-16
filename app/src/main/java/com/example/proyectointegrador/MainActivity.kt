@@ -7,20 +7,17 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectointegrador.Detail.DetailActivity
-import com.example.proyectointegrador.History.HistoryActivity
+import com.example.proyectointegrador.history.HistoryActivity
 import com.example.proyectointegrador.adapter.ActiveChallengeAdapter
 import com.example.proyectointegrador.auth.AuthActivity
 import com.example.proyectointegrador.profile.ProfileActivity
@@ -31,7 +28,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.example.proyectointegrador.placeholder.PlaceholderContent
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.util.Locale
 
 
@@ -179,12 +175,16 @@ class MainActivity : BottomNavigationBaseActivity() {
         activeChallengesCard.visibility = View.GONE
         noActiveChallengesText.visibility = View.GONE
 
-
         db.collection("users").document(uid).collection("active_challenges")
             .get()
             .addOnSuccessListener { documents ->
                 activeChallengesSpinner.visibility = View.GONE
-                if (documents.isEmpty) {
+
+                val filteredDocuments = documents.filter {
+                    it.getString("status")?.uppercase() == "ACTIVE"
+                }
+
+                if (filteredDocuments.isEmpty()) {
                     activeChallengesCard.visibility = View.GONE
                     noActiveChallengesText.visibility = View.VISIBLE
                     return@addOnSuccessListener
@@ -193,7 +193,7 @@ class MainActivity : BottomNavigationBaseActivity() {
                 activeChallengesCard.visibility = View.VISIBLE
                 noActiveChallengesText.visibility = View.GONE
 
-                val challengeList = documents.map {
+                val challengeList = filteredDocuments.map {
                     val title = it.getString("title") ?: "Unnamed Challenge"
                     val id = it.id
                     id to title
@@ -205,7 +205,7 @@ class MainActivity : BottomNavigationBaseActivity() {
                     PlaceholderContent.ITEMS.clear()
                     PlaceholderContent.ITEM_MAP.clear()
 
-                    val doc = documents.firstOrNull { it.id == challengeId }
+                    val doc = filteredDocuments.firstOrNull { it.id == challengeId }
                     if (doc != null) {
                         PlaceholderContent.addItemFromDocument(doc)
                     }
@@ -225,6 +225,7 @@ class MainActivity : BottomNavigationBaseActivity() {
                 Toast.makeText(this, getString(R.string.error_loading_challenges), Toast.LENGTH_SHORT).show()
             }
     }
+
 
     //Cambio de idioma
 

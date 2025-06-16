@@ -151,6 +151,7 @@ class ChallengeDetailFragment : Fragment() {
         }
         val challengeId = item?.id ?: return
         item?.let {
+            binding.challengeTitle?.text = it.title
             binding.challengeDescription?.text = it.description
             binding.challengeCategory?.text = getString(R.string.challenge_category, it.category)
             binding.challengeDuration?.text = getString(R.string.challenge_duration, it.durationInDays)

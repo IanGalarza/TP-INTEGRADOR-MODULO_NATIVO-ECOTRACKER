@@ -6,12 +6,10 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.proyectointegrador.auth.AuthActivity
 import com.example.proyectointegrador.databinding.ActivityChallengeDetailBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -20,10 +18,9 @@ import com.google.firebase.ktx.Firebase
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.proyectointegrador.History.HistoryActivity
+import com.example.proyectointegrador.history.HistoryActivity
 import com.example.proyectointegrador.profile.ProfileActivity
 import com.example.proyectointegrador.ranking.RankingActivity
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.util.Locale
 
 
