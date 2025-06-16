@@ -56,4 +56,15 @@
     <string name="save">Guardar</string>
     <string name="additional_comment">Comentario adicional</string>
     <string name="no_challenges_found">No se encontraron desafíos.</string>
+    <string name="photo_source_gallery">Galería</string>
+    <string name="photo_source_camera">Cámara</string>
+    <string name="photo_source_title">Seleccionar fuente</string>
+    <string name="cancel">Cancelar</string>
+    <string name="confirm_complete_message">¿Estás seguro de querer finalizar la tarea? Esta acción no se puede deshacer.</string>
+    <string name="confirm_save_message">¿Desea guardar el progreso?</string>
+    <string name="confirm_complete_title">Confirmar finalización</string>
+    <string name="confirm_save_title">Guardar progreso</string>
+    <string name="saved_success">Guardado correctamente</string>
+    <string name="saved_error">Error al guardar</string>
+    <string name="upload_error">Error al subir la imagen</string>
 </resources>

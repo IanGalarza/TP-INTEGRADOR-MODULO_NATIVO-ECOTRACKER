@@ -56,4 +56,15 @@
     <string name="save">Save</string>
     <string name="additional_comment">Additional Comment</string>
     <string name="no_challenges_found">No challenges found.</string>
+    <string name="photo_source_gallery">Gallery</string>
+    <string name="photo_source_camera">Camera</string>
+    <string name="photo_source_title">Select source</string>
+    <string name="cancel">Cancel</string>
+    <string name="saved_success">Saved successfully</string>
+    <string name="saved_error">Error saving</string>
+    <string name="upload_error">Error uploading the image</string>
+    <string name="confirm_complete_message">Are you sure you want to complete the task? This action cannot be undone.</string>
+    <string name="confirm_save_message">Do you want to save the progress?</string>
+    <string name="confirm_complete_title">Confirm Completion</string>
+    <string name="confirm_save_title">Save Progress</string>
 </resources>

@@ -39,6 +39,7 @@ import android.content.pm.PackageManager
 import android.Manifest
 import android.widget.ProgressBar
 import com.google.android.material.button.MaterialButton
+import com.google.firebase.firestore.FieldValue
 
 class ChallengeDetailFragment : Fragment() {
 
@@ -230,6 +231,18 @@ class ChallengeDetailFragment : Fragment() {
                                 checkBox.isChecked = completado
                                 comment.setText(comentario)
 
+                                if (completado) {
+                                    checkBox.isEnabled = false
+                                    comment.isEnabled = false
+                                    addPhotoButton.visibility = View.GONE
+                                    saveButton.isEnabled = false
+                                } else {
+                                    checkBox.isEnabled = true
+                                    comment.isEnabled = true
+                                    addPhotoButton.visibility = View.VISIBLE
+                                    saveButton.isEnabled = true
+                                }
+
                                 if (!photoUrl.isNullOrBlank()) {
                                     placeholderText.visibility = View.GONE
                                     imageView.visibility = View.VISIBLE
@@ -245,57 +258,95 @@ class ChallengeDetailFragment : Fragment() {
                                 }
 
                                 saveButton.setOnClickListener {
-                                    val saveLoader = objetivoView.findViewById<ProgressBar>(R.id.save_loader)
-                                    saveButton.visibility = View.GONE
-                                    saveLoader.visibility = View.VISIBLE
-                                    val uriFotoPendiente = pendingPhotoUris[index]
-                                    val nuevoComentario = comment.text.toString()
-                                    val nuevoEstado = checkBox.isChecked
+                                    val isCompleted = checkBox.isChecked
 
-                                    val newTask = task.toMutableMap()
-                                    newTask["comment"] = nuevoComentario
-                                    newTask["completed"] = nuevoEstado
-                                    userLocation?.let { location ->
-                                        val locMap = mapOf("lat" to location.latitude, "lng" to location.longitude)
-                                        newTask["location"] = locMap
+                                    val dialogTitle = if (isCompleted) {
+                                        getString(R.string.confirm_complete_title)
+                                    } else {
+                                        getString(R.string.confirm_save_title)
+                                    }
+                                    val dialogMessage = if (isCompleted) {
+                                        getString(R.string.confirm_complete_message)
+                                    } else {
+                                        getString(R.string.confirm_save_message)
                                     }
 
-                                    fun guardarEnFirestore(photoUrl: String? = null) {
-                                        if (photoUrl != null) newTask["photoUrl"] = photoUrl
-                                        val updatedTasks = savedTasks.toMutableList()
-                                        updatedTasks[index] = newTask
+                                    AlertDialog.Builder(requireContext())
+                                        .setTitle(dialogTitle)
+                                        .setMessage(dialogMessage)
+                                        .setPositiveButton(getString(R.string.save)) { dialog, _ ->
+                                            dialog.dismiss()
 
-                                        FirebaseFirestore.getInstance()
-                                            .collection("users")
-                                            .document(user.uid)
-                                            .collection("active_challenges")
-                                            .document(challengeId)
-                                            .update("tasks", updatedTasks)
-                                            .addOnSuccessListener {
-                                                saveButton.visibility = View.VISIBLE
-                                                saveLoader.visibility = View.GONE
-                                                Toast.makeText(requireContext(), "Guardado correctamente", Toast.LENGTH_SHORT).show()
-                                                pendingPhotoUris.remove(index)
+                                            val saveLoader = objetivoView.findViewById<ProgressBar>(R.id.save_loader)
+                                            saveButton.visibility = View.GONE
+                                            saveLoader.visibility = View.VISIBLE
+                                            val uriFotoPendiente = pendingPhotoUris[index]
+                                            val nuevoComentario = comment.text.toString()
+                                            val nuevoEstado = checkBox.isChecked
 
+                                            val newTask = task.toMutableMap()
+                                            newTask["comment"] = nuevoComentario
+                                            newTask["completed"] = nuevoEstado
+                                            userLocation?.let { location ->
+                                                val locMap = mapOf("lat" to location.latitude, "lng" to location.longitude)
+                                                newTask["location"] = locMap
                                             }
-                                            .addOnFailureListener {
-                                                saveButton.visibility = View.VISIBLE
-                                                saveLoader.visibility = View.GONE
-                                                Toast.makeText(requireContext(), "Error al guardar", Toast.LENGTH_SHORT).show()
+
+                                            fun guardarEnFirestore(photoUrl: String? = null) {
+                                                if (photoUrl != null) newTask["photoUrl"] = photoUrl
+                                                val updatedTasks = savedTasks.toMutableList()
+                                                updatedTasks[index] = newTask
+
+                                                FirebaseFirestore.getInstance()
+                                                    .collection("users")
+                                                    .document(user.uid)
+                                                    .collection("active_challenges")
+                                                    .document(challengeId)
+                                                    .update("tasks", updatedTasks)
+                                                    .addOnSuccessListener {
+                                                        saveButton.visibility = View.VISIBLE
+                                                        saveLoader.visibility = View.GONE
+                                                        Toast.makeText(requireContext(), getString(R.string.saved_success), Toast.LENGTH_SHORT).show()
+                                                        pendingPhotoUris.remove(index)
+
+                                                        // Updateo los puntos en caso de ser exitoso
+
+                                                        if (nuevoEstado) {
+                                                            FirebaseFirestore.getInstance()
+                                                                .collection("users")
+                                                                .document(user.uid)
+                                                                .update("points", FieldValue.increment(points.toLong()))
+                                                        }
+
+                                                        //Refresar UI en caso de ser exitoso.
+
+                                                        updateContent()
+                                                    }
+                                                    .addOnFailureListener {
+                                                        saveButton.visibility = View.VISIBLE
+                                                        saveLoader.visibility = View.GONE
+                                                        Toast.makeText(requireContext(), getString(R.string.saved_error), Toast.LENGTH_SHORT).show()
+                                                    }
                                             }
-                                    }
-                                    if (uriFotoPendiente != null) {
-                                        subirFotoACloudinary(uriFotoPendiente) { cloudUrl ->
-                                            if (cloudUrl == null) {
-                                                Toast.makeText(requireContext(), "Error al subir la imagen", Toast.LENGTH_SHORT).show()
+                                            if (uriFotoPendiente != null) {
+                                                subirFotoACloudinary(uriFotoPendiente) { cloudUrl ->
+                                                    if (cloudUrl == null) {
+                                                        Toast.makeText(requireContext(), getString(R.string.upload_error), Toast.LENGTH_SHORT).show()
+                                                    } else {
+                                                        guardarEnFirestore(cloudUrl)
+                                                    }
+                                                }
                                             } else {
-                                                guardarEnFirestore(cloudUrl)
+                                                guardarEnFirestore()
                                             }
                                         }
-                                    } else {
-                                        guardarEnFirestore()
-                                    }
+                                        .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                                            dialog.dismiss()
+                                            // No hace nada más si cancela
+                                        }
+                                        .show()
                                 }
+
                                 binding.acceptedObjectivesContainer?.addView(objetivoView)
                             }
 
@@ -336,16 +387,19 @@ class ChallengeDetailFragment : Fragment() {
     private fun showPhotoSourceDialog(forTaskIndex: Int) {
         currentTaskIndexForPhoto = forTaskIndex
 
-        val options = arrayOf("Galería", "Cámara")
+        val options = arrayOf(
+            getString(R.string.photo_source_gallery),
+            getString(R.string.photo_source_camera)
+        )
         AlertDialog.Builder(requireContext())
-            .setTitle("Seleccionar fuente")
+            .setTitle(getString(R.string.photo_source_title))
             .setItems(options) { _, which ->
                 when (which) {
                     0 -> pickPhotoFromGallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                     1 -> checkCameraPermissionAndOpen(forTaskIndex)
                 }
             }
-            .setNegativeButton("Cancelar", null)
+            .setNegativeButton(getString(R.string.cancel), null)
             .show()
     }
 
