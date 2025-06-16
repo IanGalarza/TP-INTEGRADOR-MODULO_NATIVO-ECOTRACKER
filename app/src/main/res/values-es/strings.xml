@@ -52,4 +52,7 @@
     <string name="no_changes">No se realizaron cambios</string>
     <string name="challenge_duration">Duración: %1$d días</string>
     <string name="no_image">Sin imagen</string>
+    <string name="task_number">Tarea %1$d</string>
+    <string name="save">Guardar</string>
+    <string name="additional_comment">Comentario adicional</string>
 </resources>

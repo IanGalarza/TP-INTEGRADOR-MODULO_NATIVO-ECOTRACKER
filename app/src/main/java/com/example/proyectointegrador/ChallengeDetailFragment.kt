@@ -117,15 +117,20 @@ class ChallengeDetailFragment : Fragment() {
                     .get()
                     .addOnSuccessListener { doc ->
                         if (doc.exists()) {
+
                             // Desafío aceptado
+
                             binding.acceptButton?.visibility = View.GONE
-                            binding.challengeStatus?.text = getString(R.string.challenge_status, "ACTIVE")
+                            val savedStatus = doc.getString("status") ?: "ACTIVE"
+                            binding.challengeStatus?.text = getString(R.string.challenge_status, savedStatus)
                             binding.challengeStatus?.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
 
-                            // Ocultamos la card vieja con el listado plano
+                            // Se oculta la card con los objetivos planos
+
                             binding.challengeObjectivesCard?.visibility = View.GONE
 
-                            // Mostramos el contenedor nuevo
+                            // Se muestra el contenedor de las tareas
+
                             binding.acceptedObjectivesContainer?.visibility = View.VISIBLE
                             binding.acceptedObjectivesContainer?.removeAllViews()
 
@@ -142,18 +147,34 @@ class ChallengeDetailFragment : Fragment() {
                                 val placeholderText = objetivoView.findViewById<TextView>(R.id.no_image_placeholder)
                                 val saveButton = objetivoView.findViewById<Button>(R.id.button_save)
 
-                                val taskTitle = task["title"] as? String ?: "Tarea"
+                                val headerContainer = objetivoView.findViewById<View>(R.id.header_container)
+                                val expandableContent = objetivoView.findViewById<View>(R.id.expandable_content)
+                                val expandIcon = objetivoView.findViewById<ImageView>(R.id.expand_icon)
+
+                                headerContainer.setOnClickListener {
+                                    val isExpanded = expandableContent.visibility == View.VISIBLE
+
+                                    //Mostrar o no el contenido
+                                    expandableContent.visibility = if (isExpanded) View.GONE else View.VISIBLE
+
+                                    // Animación de rotación del ícono
+                                    val rotationAngle = if (isExpanded) 0f else 180f
+                                    expandIcon.animate().rotation(rotationAngle).setDuration(200).start()
+                                }
+
+                                val taskTitle = task["title"] as? String ?: "Task"
                                 val points = (task["points"] as? Long)?.toInt() ?: 0
                                 val comentario = task["comment"] as? String ?: ""
                                 val completado = task["completed"] as? Boolean ?: false
                                 val photoUrl = task["photoUrl"] as? String
 
-                                title.text = "Tarea ${index + 1}"
+                                title.text = getString(R.string.task_number, index + 1)
                                 checkBox.text = "$taskTitle (+$points pts)"
                                 checkBox.isChecked = completado
                                 comment.setText(comentario)
 
                                 // Mostrar imagen si existe
+
                                 if (!photoUrl.isNullOrBlank()) {
                                     placeholderText.visibility = View.GONE
                                     imageView.visibility = View.VISIBLE

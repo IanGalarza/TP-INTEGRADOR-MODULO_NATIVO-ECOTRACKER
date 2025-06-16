@@ -14,114 +14,136 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Título principal -->
-        <TextView
-            android:id="@+id/objective_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Objective"
-            android:textAlignment="center"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:layout_marginBottom="8dp"/>
+        <!-- Botón de cabecera con flecha -->
 
-        <!-- Separador -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Subtítulo del objetivo -->
-        <CheckBox
-            android:id="@+id/objective_checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp"/>
-
-        <!-- Foto + Botón -->
         <LinearLayout
-            android:id="@+id/photo_container"
+            android:id="@+id/header_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingBottom="8dp">
+
+            <TextView
+                android:id="@+id/objective_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white" />
+
+            <ImageView
+                android:id="@+id/expand_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_expand_more"
+                android:rotation="0" />
+        </LinearLayout>
+
+        <!-- Contenido expandible -->
+
+        <LinearLayout
+            android:id="@+id/expandable_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="8dp"
-            android:background="@color/gray"
-            android:padding="8dp"
-            android:layout_marginBottom="12dp">
+            android:visibility="gone">
 
-            <FrameLayout
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="180dp">
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"
+                android:layout_marginBottom="12dp" />
 
-                <ImageView
-                    android:id="@+id/objective_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:visibility="gone"
-                    android:background="@color/gray" />
+            <CheckBox
+                android:id="@+id/objective_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:layout_marginBottom="8dp"/>
 
-                <TextView
-                    android:id="@+id/no_image_placeholder"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="@string/no_image"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp"
-                    android:background="@color/gray" />
-            </FrameLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_add_photo"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="8dp"
-                android:backgroundTint="?attr/colorPrimary"
-                app:icon="@drawable/ic_add"
-                app:iconTint="@color/white"
-                app:cornerRadius="24dp" />
-        </LinearLayout>
-
-        <!-- Comentario adicional -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:boxBackgroundColor="@color/cardBackgroundDark"
-            app:boxStrokeColor="@color/white"
-            android:textColorHint="@color/white"
-            app:boxCornerRadiusTopStart="8dp"
-            app:boxCornerRadiusTopEnd="8dp"
-            app:boxCornerRadiusBottomStart="8dp"
-            app:boxCornerRadiusBottomEnd="8dp"
-            app:boxBackgroundMode="outline">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/objective_comment"
+            <LinearLayout
+                android:id="@+id/photo_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:minLines="5"
-                android:maxLines="8"
-                android:textColor="@android:color/white"
-                android:hint="Additional Comment"
-                android:padding="8dp" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:orientation="vertical"
+                android:layout_marginTop="8dp"
+                android:background="@color/gray"
+                android:padding="8dp"
+                android:layout_marginBottom="12dp">
 
-        <!-- Botón Guardar -->
-        <Button
-            android:id="@+id/button_save"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Save"
-            android:layout_gravity="center"
-            android:layout_marginTop="16dp"/>
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp">
+
+                    <ImageView
+                        android:id="@+id/objective_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"
+                        android:background="@color/gray" />
+
+                    <TextView
+                        android:id="@+id/no_image_placeholder"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="@string/no_image"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:background="@color/gray" />
+                </FrameLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_add_photo"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:backgroundTint="?attr/colorPrimary"
+                    app:icon="@drawable/ic_add"
+                    app:iconTint="@color/white"
+                    app:cornerRadius="24dp" />
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:boxBackgroundColor="@color/cardBackgroundDark"
+                app:boxStrokeColor="@color/white"
+                android:textColorHint="@color/white"
+                app:boxCornerRadiusTopStart="8dp"
+                app:boxCornerRadiusTopEnd="8dp"
+                app:boxCornerRadiusBottomStart="8dp"
+                app:boxCornerRadiusBottomEnd="8dp"
+                app:boxBackgroundMode="outline">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/objective_comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:minLines="5"
+                    android:maxLines="8"
+                    android:textColor="@android:color/white"
+                    android:hint="@string/additional_comment"
+                    android:padding="8dp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/button_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/save"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"/>
+        </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
