@@ -23,6 +23,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.proyectointegrador.History.HistoryActivity
 import com.example.proyectointegrador.profile.ProfileActivity
 import com.example.proyectointegrador.ranking.RankingActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.util.Locale
 
 
@@ -55,6 +56,45 @@ class ChallengeDetailHostActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         auth = Firebase.auth
+
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNav.selectedItemId = R.id.action_challenges
+
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.action_home -> {
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                    true
+                }
+                R.id.action_challenges -> {
+                    true
+                }
+                R.id.action_ranking -> {
+                    startActivity(Intent(this, RankingActivity::class.java))
+                    finish()
+                    true
+                }
+                R.id.action_history -> {
+                    startActivity(Intent(this, HistoryActivity::class.java))
+                    finish()
+                    true
+                }
+                R.id.action_profile -> {
+                    startActivity(Intent(this, ProfileActivity::class.java))
+                    finish()
+                    true
+                }
+                R.id.action_logout -> {
+                    auth.signOut()
+                    startActivity(Intent(this, AuthActivity::class.java))
+                    finish()
+                    true
+                }
+                else -> false
+            }
+        }
+
     }
 
     override fun onSupportNavigateUp(): Boolean {

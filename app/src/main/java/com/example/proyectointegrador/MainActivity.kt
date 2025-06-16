@@ -31,6 +31,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.example.proyectointegrador.placeholder.PlaceholderContent
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.util.Locale
 
 
@@ -69,6 +70,34 @@ class MainActivity : AppCompatActivity() {
         profileCard = findViewById(R.id.profile_card)
         rankingCard = findViewById(R.id.ranking_card)
         historyCard = findViewById(R.id.history_card)
+
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.action_home -> {
+                    true
+                }
+                R.id.action_challenges -> {
+                    startActivity(Intent(this, ChallengeDetailHostActivity::class.java))
+                    true
+                }
+                R.id.action_profile -> {
+                    startActivity(Intent(this, ProfileActivity::class.java))
+                    true
+                }
+                R.id.action_ranking -> {
+                    startActivity(Intent(this, RankingActivity::class.java))
+                    true
+                }
+                R.id.action_history -> {
+                    startActivity(Intent(this, HistoryActivity::class.java))
+                    true
+                }
+                else -> false
+            }
+        }
+
 
         challengesCard.setOnClickListener {
             val intent = Intent(this, ChallengeDetailHostActivity::class.java)

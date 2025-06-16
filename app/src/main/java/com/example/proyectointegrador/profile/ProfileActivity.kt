@@ -16,6 +16,7 @@ import com.example.proyectointegrador.History.HistoryActivity
 import com.example.proyectointegrador.MainActivity
 import com.example.proyectointegrador.auth.AuthActivity
 import com.example.proyectointegrador.ranking.RankingActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import java.util.Locale
@@ -35,6 +36,39 @@ class ProfileActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = getString(R.string.title_profile)
+
+        // Bottom navigation setup
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNav.selectedItemId = R.id.action_profile
+
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.action_home -> {
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                    true
+                }
+                R.id.action_challenges -> {
+                    startActivity(Intent(this, ChallengeDetailHostActivity::class.java))
+                    finish()
+                    true
+                }
+                R.id.action_ranking -> {
+                    startActivity(Intent(this, RankingActivity::class.java))
+                    finish()
+                    true
+                }
+                R.id.action_history -> {
+                    startActivity(Intent(this, HistoryActivity::class.java))
+                    finish()
+                    true
+                }
+                R.id.action_profile -> {
+                    true
+                }
+                else -> false
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -47,29 +81,6 @@ class ProfileActivity : AppCompatActivity() {
         return when (item.itemId) {
             android.R.id.home -> {
                 onBackPressedDispatcher.onBackPressed()
-                true
-            }
-            R.id.action_home -> {
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
-                true
-            }
-            R.id.action_challenges -> {
-                startActivity(Intent(this, ChallengeDetailHostActivity::class.java))
-                finish()
-                true
-            }
-            R.id.action_ranking -> {
-                startActivity(Intent(this, RankingActivity::class.java))
-                finish()
-                true
-            }
-            R.id.action_history -> {
-                startActivity(Intent(this, HistoryActivity::class.java))
-                finish()
-                true
-            }
-            R.id.action_profile -> {
                 true
             }
             R.id.action_logout -> {

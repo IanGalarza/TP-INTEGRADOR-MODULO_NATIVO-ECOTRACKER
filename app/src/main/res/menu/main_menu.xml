@@ -3,35 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_home"
-        android:title="@string/home"
-        android:icon="@drawable/ic_home"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_challenges"
-        android:title="@string/challenges"
-        android:icon="@drawable/ic_challenges"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_ranking"
-        android:title="@string/ranking"
-        android:icon="@drawable/ic_ranking"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_history"
-        android:title="@string/history"
-        android:icon="@drawable/ic_history"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_profile"
-        android:title="@string/profile"
-        android:icon="@drawable/ic_profile"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/action_logout"
         android:title="@string/logout"
         app:showAsAction="never" />

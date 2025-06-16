@@ -19,6 +19,7 @@ import com.example.proyectointegrador.R
 import com.example.proyectointegrador.auth.AuthActivity
 import com.example.proyectointegrador.profile.ProfileActivity
 import com.example.proyectointegrador.ranking.RankingActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import java.util.Locale
@@ -55,6 +56,38 @@ class DetailActivity : AppCompatActivity() {
                 .replace(R.id.detail_fragment_container, fragment)
                 .commit()
         }
+
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.action_home -> {
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                    true
+                }
+                R.id.action_challenges -> {
+                    startActivity(Intent(this, ChallengeDetailHostActivity::class.java))
+                    finish()
+                    true
+                }
+                R.id.action_ranking -> {
+                    startActivity(Intent(this, RankingActivity::class.java))
+                    finish()
+                    true
+                }
+                R.id.action_history -> {
+                    startActivity(Intent(this, HistoryActivity::class.java))
+                    finish()
+                    true
+                }
+                R.id.action_profile -> {
+                    startActivity(Intent(this, ProfileActivity::class.java))
+                    finish()
+                    true
+                }
+                else -> false
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -68,35 +101,6 @@ class DetailActivity : AppCompatActivity() {
                 onBackPressedDispatcher.onBackPressed()
                 true
             }
-
-            R.id.action_home -> {
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
-                true
-            }
-
-            R.id.action_challenges -> {
-                startActivity(Intent(this, ChallengeDetailHostActivity::class.java))
-                finish()
-                true
-            }
-
-            R.id.action_ranking -> {
-                startActivity(Intent(this, RankingActivity::class.java))
-                finish()
-                true
-            }
-            R.id.action_history -> {
-                startActivity(Intent(this, HistoryActivity::class.java))
-                finish()
-                true
-            }
-            R.id.action_profile -> {
-                startActivity(Intent(this, ProfileActivity::class.java))
-                finish()
-                true
-            }
-
             R.id.action_logout -> {
                 Firebase.auth.signOut()
                 startActivity(Intent(this, AuthActivity::class.java))
@@ -107,6 +111,7 @@ class DetailActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
     override fun attachBaseContext(newBase: Context) {
         val prefs = newBase.getSharedPreferences("user_preferences", Context.MODE_PRIVATE)
         val langCode = prefs.getString("preferred_language", "en") ?: "en"
