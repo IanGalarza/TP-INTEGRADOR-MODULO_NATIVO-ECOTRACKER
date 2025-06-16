@@ -8,8 +8,6 @@
     android:layout_height="match_parent"
     tools:context=".History.HistoryActivity">
 
-
-
     <!-- Fragments -->
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

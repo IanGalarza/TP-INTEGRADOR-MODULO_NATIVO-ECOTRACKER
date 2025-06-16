@@ -82,8 +82,6 @@ class ChallengeDetailFragment : Fragment() {
         true
     }
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -105,7 +103,6 @@ class ChallengeDetailFragment : Fragment() {
         _binding = FragmentChallengeDetailBinding.inflate(inflater, container, false)
         val rootView = binding.root
 
-
         //itemDetailTextView = binding.challengeDetail
         headerImageView = binding.headerImage!!
 
@@ -126,7 +123,6 @@ class ChallengeDetailFragment : Fragment() {
     }
 
     private fun updateContent() {
-
 
         binding.loadingSpinner?.visibility = View.VISIBLE
         binding.challengeDetailScrollView?.visibility = View.GONE
@@ -178,6 +174,7 @@ class ChallengeDetailFragment : Fragment() {
                             val savedTasks = doc["tasks"] as? List<Map<String, Any>> ?: emptyList()
 
                             savedTasks.forEachIndexed { index, task ->
+
                                 val objetivoView = layoutInflater.inflate(R.layout.challenge_objective_item, binding.acceptedObjectivesContainer, false)
 
                                 val title = objetivoView.findViewById<TextView>(R.id.objective_title)
@@ -298,9 +295,6 @@ class ChallengeDetailFragment : Fragment() {
             }
         }
     }
-
-
-
 
     private fun showPhotoSourceDialog(forTaskIndex: Int) {
         currentTaskIndexForPhoto = forTaskIndex

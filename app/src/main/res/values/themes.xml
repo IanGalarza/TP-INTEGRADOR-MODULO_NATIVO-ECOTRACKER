@@ -27,6 +27,12 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
+    <style name="BottomNavText" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textSize">12sp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+
     <style name="TextAppearance.CollapsingToolbar.Outlined" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textColor">@color/green</item>
         <item name="android:background">@drawable/toolbar_title_background</item>

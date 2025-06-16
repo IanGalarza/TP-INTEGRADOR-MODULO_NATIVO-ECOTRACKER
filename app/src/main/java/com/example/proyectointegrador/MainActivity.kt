@@ -60,8 +60,8 @@ class MainActivity : BottomNavigationBaseActivity() {
             insets
         }
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
+       // val toolbar = findViewById<Toolbar>(R.id.toolbar)
+       // setSupportActionBar(toolbar)
 
         auth = Firebase.auth
         welcomeTextView = findViewById(R.id.user_welcome)
@@ -72,8 +72,6 @@ class MainActivity : BottomNavigationBaseActivity() {
         profileCard = findViewById(R.id.profile_card)
         rankingCard = findViewById(R.id.ranking_card)
         historyCard = findViewById(R.id.history_card)
-
-
 
 
         challengesCard.setOnClickListener {

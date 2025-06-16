@@ -1,5 +1,6 @@
 package com.example.proyectointegrador.profile.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.proyectointegrador.R
+import com.example.proyectointegrador.auth.AuthActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -49,6 +51,14 @@ class ProfileDetailFragment : Fragment() {
 
         view.findViewById<LinearLayout>(R.id.btn_edit_preferences).setOnClickListener {
             findNavController().navigate(R.id.preferencesFragment)
+        }
+
+        view.findViewById<LinearLayout>(R.id.btn_logout).setOnClickListener {
+            auth.signOut()
+
+            val intent = Intent(requireContext(), AuthActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish()
         }
 
 

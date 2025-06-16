@@ -9,8 +9,6 @@
     tools:context=".profile.ProfileActivity"
     android:fitsSystemWindows="true">
 
-
-
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/profile_fragment_container"
         android:name="androidx.navigation.fragment.NavHostFragment"
