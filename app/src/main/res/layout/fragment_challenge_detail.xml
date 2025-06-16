@@ -131,6 +131,14 @@
                         android:textColor="@android:color/white" />
 
                     <TextView
+                        android:id="@+id/challenge_extra_points"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textSize="18sp"
+                        android:textColor="@android:color/white" />
+
+                    <TextView
                         android:id="@+id/challenge_status"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

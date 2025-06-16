@@ -39,7 +39,8 @@ object PlaceholderContent {
                         status = document.getString("status") ?: "INACTIVE",
                         category = document.getString("category") ?: "",
                         imageUrl = document.getString("imageUrl"),
-                        durationInDays = (document.getLong("durationInDays") ?: 0L).toInt()
+                        durationInDays = (document.getLong("durationInDays") ?: 0L).toInt(),
+                        extraPoints = (document.getLong("extraPoints") ?: 0L).toInt()
                     )
                     ITEMS.add(item)
                     ITEM_MAP[item.id] = item
@@ -84,6 +85,7 @@ object PlaceholderContent {
             "durationInDays" to challenge.durationInDays,
             "category" to challenge.category,
             "imageUrl" to challenge.imageUrl,
+            "extraPoints" to challenge.extraPoints,
             "tasks" to tasksList
         )
 
@@ -114,7 +116,8 @@ object PlaceholderContent {
             status = document.getString("status") ?: "INACTIVE",
             category = document.getString("category") ?: "",
             imageUrl = document.getString("imageUrl"),
-            durationInDays = (document.getLong("durationInDays") ?: 0L).toInt()
+            durationInDays = (document.getLong("durationInDays") ?: 0L).toInt(),
+            extraPoints = (document.getLong("extraPoints") ?: 0L).toInt()
         )
         ITEMS.add(item)
         ITEM_MAP[item.id] = item
@@ -128,7 +131,8 @@ object PlaceholderContent {
         val status: String,
         val category: String,
         val durationInDays: Int,
-        val imageUrl: String?
+        val imageUrl: String?,
+        val extraPoints: Int
     ) {
         override fun toString(): String = title
     }

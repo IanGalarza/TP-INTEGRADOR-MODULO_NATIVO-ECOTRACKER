@@ -38,7 +38,10 @@ import androidx.core.app.ActivityCompat
 import android.content.pm.PackageManager
 import android.Manifest
 import android.widget.ProgressBar
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.android.material.button.MaterialButton
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 
 class ChallengeDetailFragment : Fragment() {
@@ -157,10 +160,12 @@ class ChallengeDetailFragment : Fragment() {
             binding.challengeDescription?.text = it.description
             binding.challengeCategory?.text = getString(R.string.challenge_category, it.category)
             binding.challengeDuration?.text = getString(R.string.challenge_duration, it.durationInDays)
+            binding.challengeExtraPoints?.text = getString(R.string.extra_points_label, it.extraPoints)
 
             val statusColor = when (it.status.uppercase()) {
                 "INACTIVE", "CANCELLED" -> R.color.red
                 "ACTIVE" -> R.color.green
+                "COMPLETED" -> R.color.aqua_green
                 else -> R.color.green
             }
             binding.challengeStatus?.setTextColor(ContextCompat.getColor(requireContext(), statusColor))
@@ -185,6 +190,7 @@ class ChallengeDetailFragment : Fragment() {
                             val dynamicStatusColor = when (savedStatus.uppercase()) {
                                 "INACTIVE", "CANCELLED" -> R.color.red
                                 "ACTIVE" -> R.color.green
+                                "COMPLETED" -> R.color.aqua_green
                                 else -> R.color.green
                             }
                             binding.challengeStatus?.setTextColor(ContextCompat.getColor(requireContext(), dynamicStatusColor))
@@ -379,18 +385,49 @@ class ChallengeDetailFragment : Fragment() {
                                                         Toast.makeText(requireContext(), getString(R.string.saved_success), Toast.LENGTH_SHORT).show()
                                                         pendingPhotoUris.remove(index)
 
-                                                        // Updateo los puntos en caso de ser exitoso
+                                                        val db = FirebaseFirestore.getInstance()
+                                                        val userDoc = db.collection("users").document(user.uid)
+                                                        val challengeDocRef = userDoc.collection("active_challenges").document(challengeId)
+
+                                                        val updates = mutableListOf<Task<*>>()
 
                                                         if (nuevoEstado) {
-                                                            FirebaseFirestore.getInstance()
-                                                                .collection("users")
-                                                                .document(user.uid)
-                                                                .update("points", FieldValue.increment(points.toLong()))
+                                                            val updatePoints = userDoc.update("points", FieldValue.increment(points.toLong()))
+                                                            updates.add(updatePoints)
                                                         }
 
-                                                        //Refresar UI en caso de ser exitoso.
+                                                        val allCompleted = updatedTasks.all { it["completed"] == true }
 
-                                                        updateContent()
+                                                        if (allCompleted) {
+                                                            challengeDocRef.get().addOnSuccessListener { challengeDoc ->
+                                                                val endDate = challengeDoc.getTimestamp("endDate")
+                                                                val extraPoints = challengeDoc.getLong("extraPoints") ?: 0L
+                                                                val now = Timestamp.now()
+
+                                                                val additionalUpdates = mutableListOf<Task<*>>()
+
+                                                                // Se marca como completed
+                                                                additionalUpdates.add(
+                                                                    challengeDocRef.update("status", "COMPLETED")
+                                                                )
+
+                                                                // Sumar extraPoints si el desafío termino antes del endDate
+
+                                                                if (endDate != null && now < endDate && extraPoints > 0) {
+                                                                    additionalUpdates.add(
+                                                                        userDoc.update("points", FieldValue.increment(extraPoints))
+                                                                    )
+                                                                }
+
+                                                                Tasks.whenAllComplete(additionalUpdates).addOnCompleteListener {
+                                                                    updateContent()
+                                                                }
+                                                            }
+                                                        } else {
+                                                            Tasks.whenAllComplete(updates).addOnCompleteListener {
+                                                                updateContent()
+                                                            }
+                                                        }
                                                     }
                                                     .addOnFailureListener {
                                                         saveButton.visibility = View.VISIBLE
