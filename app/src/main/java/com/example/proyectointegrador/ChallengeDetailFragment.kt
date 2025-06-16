@@ -38,6 +38,7 @@ import androidx.core.app.ActivityCompat
 import android.content.pm.PackageManager
 import android.Manifest
 import android.widget.ProgressBar
+import com.google.android.material.button.MaterialButton
 
 class ChallengeDetailFragment : Fragment() {
 
@@ -198,7 +199,7 @@ class ChallengeDetailFragment : Fragment() {
                                 val title = objetivoView.findViewById<TextView>(R.id.objective_title)
                                 val checkBox = objetivoView.findViewById<CheckBox>(R.id.objective_checkbox)
                                 val comment = objetivoView.findViewById<EditText>(R.id.objective_comment)
-                                val addPhotoButton = objetivoView.findViewById<Button>(R.id.button_add_photo)
+                                val addPhotoButton = objetivoView.findViewById<MaterialButton>(R.id.button_add_photo)
                                 val imageView = objetivoView.findViewById<ImageView>(R.id.objective_image)
                                 val placeholderText = objetivoView.findViewById<TextView>(R.id.no_image_placeholder)
                                 val saveButton = objetivoView.findViewById<Button>(R.id.button_save)
@@ -233,6 +234,7 @@ class ChallengeDetailFragment : Fragment() {
                                     placeholderText.visibility = View.GONE
                                     imageView.visibility = View.VISIBLE
                                     Glide.with(this).load(photoUrl).into(imageView)
+                                    addPhotoButton.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_edit)
                                 } else {
                                     imageView.visibility = View.GONE
                                     placeholderText.visibility = View.VISIBLE
@@ -387,6 +389,8 @@ class ChallengeDetailFragment : Fragment() {
             placeholderText.visibility = View.GONE
             imageView.visibility = View.VISIBLE
             Glide.with(this).load(uri).into(imageView)
+            val addPhotoButton = objetivoView.findViewById<MaterialButton>(R.id.button_add_photo)
+            addPhotoButton.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_edit)
         }
     }
 
