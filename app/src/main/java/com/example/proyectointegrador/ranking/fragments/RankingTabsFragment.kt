@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.example.proyectointegrador.R
 import com.example.proyectointegrador.databinding.FragmentRankingTabsBinding
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -14,7 +15,12 @@ class RankingTabsFragment : Fragment() {
     private var _binding: FragmentRankingTabsBinding? = null
     private val binding get() = _binding!!
 
-    private val tabTitles = listOf("Global", "Por zona")
+    private val tabTitles by lazy {
+        listOf(
+            context?.getString(R.string.tab_global),
+            context?.getString(R.string.tab_by_zone)
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

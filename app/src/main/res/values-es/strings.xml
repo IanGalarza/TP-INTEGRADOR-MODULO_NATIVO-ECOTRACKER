@@ -79,5 +79,7 @@
     <string name="reactivate_error">Error al reactivar el desafio</string>
     <string name="reactivate">Reactivar</string>
     <string name="extra_points_label">Puntos extra: %1$d</string>
-    <string name="top_zones">Top zonas</string>
+    <string name="top_zones">TOP ZONAS</string>
+    <string name="tab_global">Global</string>
+    <string name="tab_by_zone">Por zona</string>
 </resources>

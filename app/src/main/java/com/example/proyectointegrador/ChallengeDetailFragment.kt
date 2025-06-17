@@ -372,8 +372,8 @@ class ChallengeDetailFragment : Fragment() {
                                                 val locMap = mutableMapOf<String, Any?>(
                                                     "lat" to (lat ?: 0.0),
                                                     "lng" to (lng ?: 0.0),
-                                                    "city" to (city ?: "Desconocido"),
-                                                    "country" to (country ?: "Desconocido")
+                                                    "city" to (city ?: "Unknown"),
+                                                    "country" to (country ?: "Unknown")
                                                 )
                                                 newTask["location"] = locMap
                                                 if (photoUrl != null) newTask["photoUrl"] = photoUrl
