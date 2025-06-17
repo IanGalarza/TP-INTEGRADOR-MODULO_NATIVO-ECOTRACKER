@@ -37,12 +37,15 @@ import android.location.Location
 import androidx.core.app.ActivityCompat
 import android.content.pm.PackageManager
 import android.Manifest
+import android.content.Context
+import android.location.Geocoder
 import android.widget.ProgressBar
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
+import java.util.Locale
 
 class ChallengeDetailFragment : Fragment() {
 
@@ -363,19 +366,23 @@ class ChallengeDetailFragment : Fragment() {
                                             val newTask = task.toMutableMap()
                                             newTask["comment"] = nuevoComentario
                                             newTask["completed"] = nuevoEstado
-                                            userLocation?.let { location ->
-                                                val locMap = mapOf("lat" to location.latitude, "lng" to location.longitude)
-                                                newTask["location"] = locMap
-                                            }
 
-                                            fun guardarEnFirestore(photoUrl: String? = null) {
+
+                                            fun guardarTaskConLocation(lat: Double?, lng: Double?, city: String?, country: String?, photoUrl: String? = null) {
+                                                val locMap = mutableMapOf<String, Any?>(
+                                                    "lat" to (lat ?: 0.0),
+                                                    "lng" to (lng ?: 0.0),
+                                                    "city" to (city ?: "Desconocido"),
+                                                    "country" to (country ?: "Desconocido")
+                                                )
+                                                newTask["location"] = locMap
                                                 if (photoUrl != null) newTask["photoUrl"] = photoUrl
                                                 val updatedTasks = savedTasks.toMutableList()
                                                 updatedTasks[index] = newTask
 
                                                 FirebaseFirestore.getInstance()
                                                     .collection("users")
-                                                    .document(user.uid)
+                                                    .document(user!!.uid)
                                                     .collection("active_challenges")
                                                     .document(challengeId)
                                                     .update("tasks", updatedTasks)
@@ -386,39 +393,29 @@ class ChallengeDetailFragment : Fragment() {
                                                         pendingPhotoUris.remove(index)
 
                                                         val db = FirebaseFirestore.getInstance()
-                                                        val userDoc = db.collection("users").document(user.uid)
+                                                        val userDoc = db.collection("users").document(user!!.uid)
                                                         val challengeDocRef = userDoc.collection("active_challenges").document(challengeId)
 
                                                         val updates = mutableListOf<Task<*>>()
-
                                                         if (nuevoEstado) {
                                                             val updatePoints = userDoc.update("points", FieldValue.increment(points.toLong()))
                                                             updates.add(updatePoints)
                                                         }
-
                                                         val allCompleted = updatedTasks.all { it["completed"] == true }
-
                                                         if (allCompleted) {
                                                             challengeDocRef.get().addOnSuccessListener { challengeDoc ->
                                                                 val endDate = challengeDoc.getTimestamp("endDate")
                                                                 val extraPoints = challengeDoc.getLong("extraPoints") ?: 0L
                                                                 val now = Timestamp.now()
-
                                                                 val additionalUpdates = mutableListOf<Task<*>>()
-
-                                                                // Se marca como completed
                                                                 additionalUpdates.add(
                                                                     challengeDocRef.update("status", "COMPLETED")
                                                                 )
-
-                                                                // Sumar extraPoints si el desafío termino antes del endDate
-
                                                                 if (endDate != null && now < endDate && extraPoints > 0) {
                                                                     additionalUpdates.add(
                                                                         userDoc.update("points", FieldValue.increment(extraPoints))
                                                                     )
                                                                 }
-
                                                                 Tasks.whenAllComplete(additionalUpdates).addOnCompleteListener {
                                                                     updateContent()
                                                                 }
@@ -435,24 +432,38 @@ class ChallengeDetailFragment : Fragment() {
                                                         Toast.makeText(requireContext(), getString(R.string.saved_error), Toast.LENGTH_SHORT).show()
                                                     }
                                             }
+
+
+                                            fun withPhotoUrl(photoUrl: String? = null) {
+                                                userLocation?.let { location ->
+                                                    getCityFromLatLng(requireContext(), location.latitude, location.longitude) { city, country ->
+                                                        guardarTaskConLocation(location.latitude, location.longitude, city, country, photoUrl)
+                                                    }
+                                                } ?: run {
+
+                                                    guardarTaskConLocation(null, null, null, null, photoUrl)
+                                                }
+                                            }
+
                                             if (uriFotoPendiente != null) {
                                                 subirFotoACloudinary(uriFotoPendiente) { cloudUrl ->
                                                     if (cloudUrl == null) {
                                                         Toast.makeText(requireContext(), getString(R.string.upload_error), Toast.LENGTH_SHORT).show()
+                                                        withPhotoUrl()
                                                     } else {
-                                                        guardarEnFirestore(cloudUrl)
+                                                        withPhotoUrl(cloudUrl)
                                                     }
                                                 }
                                             } else {
-                                                guardarEnFirestore()
+                                                withPhotoUrl()
                                             }
                                         }
                                         .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                                             dialog.dismiss()
-                                            // No hace nada más si cancela
                                         }
                                         .show()
                                 }
+
 
                                 binding.acceptedObjectivesContainer?.addView(objetivoView)
                             }
@@ -594,6 +605,27 @@ class ChallengeDetailFragment : Fragment() {
                 }
             } finally {
                 tempFile.delete()
+            }
+        }.start()
+    }
+
+    fun getCityFromLatLng(context: Context, lat: Double, lng: Double, callback: (String?, String?) -> Unit) {
+        Thread {
+            try {
+                val geocoder = Geocoder(context, Locale.getDefault())
+                val addresses = geocoder.getFromLocation(lat, lng, 1)
+                var info = addresses?.firstOrNull()
+                val city = info?.locality
+                    ?: addresses?.firstOrNull()?.subAdminArea
+                    ?: addresses?.firstOrNull()?.adminArea
+                val country = info?.countryName
+                (context as? android.app.Activity)?.runOnUiThread {
+                    callback(city, country)
+                }
+            } catch (e: Exception) {
+                (context as? android.app.Activity)?.runOnUiThread {
+                    callback(null, null)
+                }
             }
         }.start()
     }
