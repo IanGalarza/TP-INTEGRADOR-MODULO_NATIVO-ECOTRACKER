@@ -56,7 +56,7 @@ class NameFragment : Fragment() {
                 binding.nameInput.setText(currentName ?: "")
             }
             .addOnFailureListener {
-                Toast.makeText(requireContext(), "Error loading name", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.error_loading_name), Toast.LENGTH_SHORT).show()
             }
             .addOnCompleteListener {
                 // Mostrar contenido y ocultar loading
@@ -71,23 +71,23 @@ class NameFragment : Fragment() {
             binding.usernameInputLayout.error = null
 
             if (newName.isEmpty()) {
-                binding.usernameInputLayout.error = "Name cannot be empty"
+                binding.usernameInputLayout.error = getString(R.string.error_name_required)
                 return@setOnClickListener
             }
 
             // Cambiar texto del botón y mostrar progress
-            binding.saveButton.text = "Saving..."
+            binding.saveButton.text = getString(R.string.saving)
             binding.saveProgressBar.visibility = View.VISIBLE
             binding.saveButton.isEnabled = false
 
             firestore.collection("users").document(uid)
                 .update("name", newName)
                 .addOnSuccessListener {
-                    Toast.makeText(requireContext(), "Name updated", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.name_updated), Toast.LENGTH_SHORT).show()
                     findNavController().popBackStack()
                 }
                 .addOnFailureListener {
-                    Toast.makeText(requireContext(), "Error updating name", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.error_updating_name), Toast.LENGTH_SHORT).show()
                 }
                 .addOnCompleteListener {
                     // Restaurar botón

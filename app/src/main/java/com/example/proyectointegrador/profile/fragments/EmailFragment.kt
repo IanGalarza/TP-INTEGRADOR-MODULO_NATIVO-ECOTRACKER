@@ -51,12 +51,12 @@ class EmailFragment : Fragment() {
             binding.emailInputLayout.error = null
 
             if (newEmail.isEmpty()) {
-                binding.emailInputLayout.error = "Email cannot be empty"
+                binding.emailInputLayout.error = getString(R.string.error_email_required)
                 return@setOnClickListener
             }
 
             if (!Patterns.EMAIL_ADDRESS.matcher(newEmail).matches()) {
-                binding.emailInputLayout.error = "Invalid email format"
+                binding.emailInputLayout.error = getString(R.string.error_email_invalid)
                 return@setOnClickListener
             }
 
@@ -64,11 +64,8 @@ class EmailFragment : Fragment() {
 
             user.verifyBeforeUpdateEmail(newEmail)
                 .addOnSuccessListener {
-                    Toast.makeText(
-                        requireContext(),
-                        "A verification email has been sent to $newEmail. Please check it to confirm the change.",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    val msg = getString(R.string.email_verification_sent, newEmail)
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
 
                     auth.signOut()
 
@@ -78,11 +75,8 @@ class EmailFragment : Fragment() {
                     startActivity(intent)
                 }
                 .addOnFailureListener { e ->
-                    Toast.makeText(
-                        requireContext(),
-                        "Failed to send verification email: ${e.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    val error = getString(R.string.email_verification_failed, e.message ?: "-")
+                    Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
                 }
         }
     }

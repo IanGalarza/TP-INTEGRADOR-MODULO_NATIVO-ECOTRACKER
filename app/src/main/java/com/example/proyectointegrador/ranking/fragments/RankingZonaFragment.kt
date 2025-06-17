@@ -53,7 +53,7 @@ class RankingZonaFragment : Fragment() {
                         val completed = task["completed"] as? Boolean ?: false
                         val points = (task["points"] as? Long)?.toInt() ?: 0
                         val location = task["location"] as? Map<String, Any>
-                        val city = location?.get("city") as? String ?: "Zona desconocida"
+                        val city = location?.get("city") as? String ?: "Unknown zone"
                         if (completed) {
                             cityPoints[city] = (cityPoints[city] ?: 0) + points
                         }

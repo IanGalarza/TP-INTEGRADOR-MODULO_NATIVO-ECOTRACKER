@@ -226,7 +226,6 @@ class MainActivity : BottomNavigationBaseActivity() {
             }
     }
 
-
     //Cambio de idioma
 
     override fun attachBaseContext(newBase: Context) {

@@ -100,11 +100,9 @@ class ChallengeDetailFragment : Fragment() {
         if (isGranted) {
             openCamera(currentTaskIndexForPhoto ?: 0)
         } else {
-            Toast.makeText(requireContext(), "Se requiere permiso de cámara para tomar fotos.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.camera_permission_required), Toast.LENGTH_SHORT).show()
         }
     }
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

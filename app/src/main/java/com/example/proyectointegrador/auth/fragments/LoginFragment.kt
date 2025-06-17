@@ -88,14 +88,13 @@ class LoginFragment : Fragment() {
             emailLayout.error = null
             passwordLayout.error = null
 
-
             if (email.isEmpty()) {
-                emailLayout.error = "Please enter your email"
+                emailLayout.error = getString(R.string.error_email_required)
                 isValid = false
             }
 
             if (password.isEmpty()) {
-                passwordLayout.error = "Please enter your password"
+                passwordLayout.error = getString(R.string.error_password_required)
                 isValid = false
             }
 
@@ -111,7 +110,7 @@ class LoginFragment : Fragment() {
 
                     if (task.isSuccessful) {
 
-                        Toast.makeText(requireContext(), "Login Successful", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.login_successful), Toast.LENGTH_SHORT).show()
 
                         val intent = Intent(requireContext(), MainActivity::class.java)
 
@@ -120,7 +119,7 @@ class LoginFragment : Fragment() {
                         requireActivity().finish()
 
                     } else {
-                        val errorMsg = "Email or password is incorrect"
+                        val errorMsg = getString(R.string.login_failed)
                         emailLayout.error = errorMsg
                         passwordLayout.error = errorMsg
                     }

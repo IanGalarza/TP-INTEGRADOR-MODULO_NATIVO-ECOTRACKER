@@ -47,7 +47,7 @@ class PasswordFragment : Fragment() {
 
         val user = auth.currentUser
         if (user == null) {
-            Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.user_not_logged_in), Toast.LENGTH_SHORT).show()
             // Aca de ultima dirigir a la pantalla de login
             return
         }
@@ -64,15 +64,15 @@ class PasswordFragment : Fragment() {
             // Validaciones
 
             if (currentPassword.isEmpty()) {
-                binding.currentPasswordLayout.error = "Current password cannot be empty"
+                binding.currentPasswordLayout.error = getString(R.string.error_current_password_required)
                 isValid = false
             }
 
             if (newPassword.isEmpty()) {
-                binding.newPasswordLayout.error = "Please enter your password"
+                binding.newPasswordLayout.error = getString(R.string.error_password_required)
                 isValid = false
             } else if (!passwordRegex.matches(newPassword)) {
-                binding.newPasswordLayout.error = "Password must be at least 8 characters and include a lowercase, uppercase letter, and a number"
+                binding.newPasswordLayout.error = getString(R.string.error_password_invalid)
                 isValid = false
             }
 
@@ -82,14 +82,14 @@ class PasswordFragment : Fragment() {
 
             setLoading(true)
 
-            // Se updatea la contraseña y se reauthentica para con
+            // Se updatea la contraseña y se reautentica para confirmar que sea el usuario
 
             val credential = EmailAuthProvider.getCredential(user.email ?: "", currentPassword)
             user.reauthenticate(credential)
                 .addOnSuccessListener {
                     user.updatePassword(newPassword)
                         .addOnSuccessListener {
-                            Toast.makeText(requireContext(), "Password updated successfully", Toast.LENGTH_LONG).show()
+                            Toast.makeText(requireContext(), getString(R.string.password_updated_successfully), Toast.LENGTH_LONG).show()
 
                             // Desloguear y enviar a AuthActivity
                             auth.signOut()
@@ -99,14 +99,15 @@ class PasswordFragment : Fragment() {
 
                         }
                         .addOnFailureListener { e ->
-                            Toast.makeText(requireContext(), "Failed to update password: ${e.message}", Toast.LENGTH_LONG).show()
+                            val msg = getString(R.string.error_updating_password, e.message ?: "-")
+                            Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
                         }
                         .addOnCompleteListener {
                             setLoading(false)
                         }
                 }
                 .addOnFailureListener {
-                    binding.currentPasswordLayout.error = "Incorrect current password"
+                    binding.currentPasswordLayout.error = getString(R.string.incorrect_current_password)
                     setLoading(false)
                 }
         }
@@ -114,7 +115,7 @@ class PasswordFragment : Fragment() {
 
     private fun setLoading(isLoading: Boolean) {
         binding.saveButton.isEnabled = !isLoading
-        binding.saveButton.text = if (isLoading) "Saving..." else getString(R.string.save_changes)
+        binding.saveButton.text = if (isLoading) getString(R.string.saving) else getString(R.string.save_changes)
     }
 
     override fun onDestroyView() {

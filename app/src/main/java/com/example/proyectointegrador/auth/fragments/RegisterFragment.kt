@@ -97,31 +97,31 @@ class RegisterFragment : Fragment() {
             var isValid = true
 
             if (name.isEmpty()) {
-                nameLayout.error = "Please enter your full name"
+                nameLayout.error = getString(R.string.error_name_required)
                 isValid = false
             }
 
             if (email.isEmpty()) {
-                emailLayout.error = "Please enter your email"
+                emailLayout.error = getString(R.string.error_email_required)
                 isValid = false
             } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                emailLayout.error = "Please enter a valid email address"
+                emailLayout.error = getString(R.string.error_email_invalid)
                 isValid = false
             }
 
             if (password.isEmpty()) {
-                passwordLayout.error = "Please enter your password"
+                passwordLayout.error = getString(R.string.error_password_required)
                 isValid = false
             } else if (!passwordRegex.matches(password)) {
-                passwordLayout.error = "Password must be at least 8 characters and include a lowercase, uppercase letter, and a number"
+                passwordLayout.error = getString(R.string.error_password_invalid)
                 isValid = false
             }
 
             if (confirmPassword.isEmpty()) {
-                confirmPasswordLayout.error = "Please confirm your password"
+                confirmPasswordLayout.error = getString(R.string.error_confirm_password_required)
                 isValid = false
             } else if (password != confirmPassword) {
-                confirmPasswordLayout.error = "Passwords do not match"
+                confirmPasswordLayout.error = getString(R.string.error_passwords_mismatch)
                 isValid = false
             }
 
@@ -150,15 +150,17 @@ class RegisterFragment : Fragment() {
                             .document(userId)
                             .set(userMap)
                             .addOnSuccessListener {
-                                Toast.makeText(requireContext(), "Account created", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(requireContext(), getString(R.string.account_created), Toast.LENGTH_SHORT).show()
 
                                 findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
                             }
                             .addOnFailureListener { e ->
-                                Toast.makeText(requireContext(), "Error saving user info: ${e.message}", Toast.LENGTH_SHORT).show()
+                                val message = getString(R.string.error_saving_user_info, e.message ?: "-")
+                                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
                             }
                     } else {
-                        Toast.makeText(requireContext(), "Authentication failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                        val error = getString(R.string.auth_failed, task.exception?.message ?: "-")
+                        Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
                     }
                 }
         }

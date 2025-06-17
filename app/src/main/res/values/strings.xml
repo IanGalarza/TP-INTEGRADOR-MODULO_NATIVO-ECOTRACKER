@@ -34,7 +34,6 @@
     <string name="challenge_saved_success">Challenge started and saved!</string>
     <string name="error_saving_challenge">Error saving challenge: %1$s</string>
     <string name="title_profile">My Profile</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="save_changes">Save Changes</string>
     <string name="top_users">TOP USERS</string>
@@ -82,4 +81,29 @@
     <string name="top_zones">TOP ZONES</string>
     <string name="tab_global">Global</string>
     <string name="tab_by_zone">By zone</string>
+    <string name="error_loading_points">Error loading points</string>
+    <string name="error_name_required">Please enter your full name</string>
+    <string name="error_email_required">Please enter your email</string>
+    <string name="error_email_invalid">Please enter a valid email address</string>
+    <string name="error_password_required">Please enter your password</string>
+    <string name="error_password_invalid">Password must be at least 8 characters and include a lowercase, uppercase letter, and a number</string>
+    <string name="error_confirm_password_required">Please confirm your password</string>
+    <string name="error_passwords_mismatch">Passwords do not match</string>
+    <string name="error_current_password_required">Current password cannot be empty</string>
+    <string name="saving">Saving...</string>
+    <string name="login_successful">Login Successful</string>
+    <string name="login_failed">Email or password is incorrect</string>
+    <string name="account_created">Account created</string>
+    <string name="error_saving_user_info">Error saving user info: %1$s</string>
+    <string name="auth_failed">Authentication failed: %1$s</string>
+    <string name="email_verification_sent">A verification email has been sent to %1$s. Please check it to confirm the change.</string>
+    <string name="email_verification_failed">Failed to send verification email: %1$s</string>
+    <string name="name_updated">Name updated</string>
+    <string name="error_updating_name">Error updating name</string>
+    <string name="password_updated_successfully">Password updated successfully</string>
+    <string name="error_updating_password">Failed to update password: %1$s</string>
+    <string name="incorrect_current_password">Incorrect current password</string>
+    <string name="user_not_logged_in">User not logged in</string>
+    <string name="error_loading_name">Error loading name</string>
+    <string name="camera_permission_required">Camera permission is required to take photos.</string>
 </resources>

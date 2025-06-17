@@ -47,7 +47,7 @@ class RankingFragment : Fragment() {
             .addOnSuccessListener { result ->
                 userList.clear()
                 for (doc in result) {
-                    val name = doc.getString("name") ?: "Sin nombre"
+                    val name = doc.getString("name") ?: "No name"
                     val points = doc.getLong("points")?.toInt() ?: 0
                     userList.add(UserRanking(name, points))
                 }

@@ -37,7 +37,6 @@ class ChallengeHistoryFragment : Fragment() {
         noHistoryText = rootView.findViewById(R.id.no_history_text)
 
         adapter = ChallengeHistoryAdapter(emptyList()) { challenge ->
-            // Abrir DetailActivity y pasar el id o lo que necesites
             val intent = Intent(requireContext(), DetailActivity::class.java)
             intent.putExtra("challengeId", challenge.id)
             startActivity(intent)
@@ -79,7 +78,7 @@ class ChallengeHistoryFragment : Fragment() {
                     PlaceholderContent.addItemFromDocument(doc)
 
                     val id = doc.id
-                    val title = doc.getString("title") ?: "Challenge sin título"
+                    val title = doc.getString("title") ?: "Challenge without Title"
                     Challenge(id = id, title = title)
                 }
 

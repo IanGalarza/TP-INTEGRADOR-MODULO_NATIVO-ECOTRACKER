@@ -78,7 +78,7 @@ class ProfileDetailFragment : Fragment() {
                     pointsProgress.visibility = View.GONE
                 }
                 .addOnFailureListener {
-                    Toast.makeText(requireContext(), "Error loading points", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.error_loading_points), Toast.LENGTH_SHORT).show()
                     pointsText.text = "0"
                     pointsText.visibility = View.VISIBLE
                     pointsProgress.visibility = View.GONE
