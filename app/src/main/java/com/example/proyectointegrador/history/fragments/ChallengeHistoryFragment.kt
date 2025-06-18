@@ -166,7 +166,6 @@ class ChallengeHistoryFragment : Fragment() {
         updateUIWithChallenges(filtered)
     }
 
-
     private fun updateUIWithChallenges(challenges: List<Challenge>) {
         if (challenges.isEmpty()) {
             noHistoryText.visibility = View.VISIBLE
