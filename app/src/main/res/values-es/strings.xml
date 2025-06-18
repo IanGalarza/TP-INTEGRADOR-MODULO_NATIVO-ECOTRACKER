@@ -107,4 +107,9 @@
     <string name="user_not_logged_in">Usuario no ha iniciado sesión</string>
     <string name="error_loading_name">Error al cargar el nombre</string>
     <string name="camera_permission_required">Se requiere permiso de cámara para tomar fotos.</string>
+    <string name="search">Buscar</string>
+    <string name="status_all">Todos</string>
+    <string name="status_active">Activos</string>
+    <string name="status_completed">Completados</string>
+    <string name="status_cancelled">Cancelados</string>
 </resources>

@@ -62,5 +62,4 @@ class HistoryActivity : BottomNavigationBaseActivity() {
         val context = newBase.createConfigurationContext(config)
         super.attachBaseContext(context)
     }
-
 }

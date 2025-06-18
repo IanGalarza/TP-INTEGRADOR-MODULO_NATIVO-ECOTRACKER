@@ -4,9 +4,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectointegrador.R
 import com.example.proyectointegrador.history.model.Challenge
+import com.google.android.material.card.MaterialCardView
 
 class ChallengeHistoryAdapter(
     private var challenges: List<Challenge>,
@@ -34,7 +36,33 @@ class ChallengeHistoryAdapter(
     override fun onBindViewHolder(holder: ChallengeViewHolder, position: Int) {
         val challenge = challenges[position]
         holder.contentTextView.text = challenge.title
+
+        // Cambiar el color de fondo segun el estado del challenge
+
+        when (challenge.status) {
+            "ACTIVE" -> {
+                (holder.itemView as MaterialCardView).setCardBackgroundColor(
+                    ContextCompat.getColor(holder.itemView.context, R.color.green)
+                )
+            }
+            "CANCELLED" -> {
+                (holder.itemView as MaterialCardView).setCardBackgroundColor(
+                    ContextCompat.getColor(holder.itemView.context, R.color.red)
+                )
+            }
+            "COMPLETED" -> {
+                (holder.itemView as MaterialCardView).setCardBackgroundColor(
+                    ContextCompat.getColor(holder.itemView.context, R.color.aqua_green)
+                )
+            }
+            else -> {
+                (holder.itemView as MaterialCardView).setCardBackgroundColor(
+                    ContextCompat.getColor(holder.itemView.context, R.color.gray)
+                )
+            }
+        }
     }
+
 
     override fun getItemCount(): Int = challenges.size
 
