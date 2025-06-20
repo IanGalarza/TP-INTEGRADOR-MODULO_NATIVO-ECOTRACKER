@@ -81,6 +81,7 @@
     <string name="top_zones">TOP ZONES</string>
     <string name="tab_global">Global</string>
     <string name="tab_by_zone">By zone</string>
+    <string name="tab_by_heatmap">Heatmap</string>
     <string name="error_loading_points">Error loading points</string>
     <string name="error_name_required">Please enter your full name</string>
     <string name="error_email_required">Please enter your email</string>
@@ -116,4 +117,19 @@
     <string name="notifications_settings">Notification Settings</string>
     <string name="enable_local_notifications">Enable challenge reminder (12h before)</string>
     <string name="enable_firebase_notifications">Enable news and updates notifications</string>
+    <string name="download_pdf">Download report</string>
+    <string name="report_start_date">Start date: %1$s</string>
+    <string name="report_end_date">End date: %1$s</string>
+    <string name="report_tasks">Tasks</string>
+    <string name="report_task_status_completed">✔ Completed</string>
+    <string name="report_task_status_pending">Pending</string>
+    <string name="report_task_points_and_status">Points: %1$d   |   Status: %2$s</string>
+    <string name="report_task_comment">Comment: %1$s</string>
+    <string name="report_task_no_comment">-</string>
+    <string name="report_task_location">Location: %1$s</string>
+    <string name="report_pdf_saved">PDF saved in Downloads</string>
+    <string name="report_pdf_error">Error saving or opening PDF: %1$s</string>
+    <string name="report_open_with">Open PDF with</string>
+    <string name="report_task_no_photo">No image</string>
+
 </resources>

@@ -18,7 +18,8 @@ class RankingTabsFragment : Fragment() {
     private val tabTitles by lazy {
         listOf(
             context?.getString(R.string.tab_global),
-            context?.getString(R.string.tab_by_zone)
+            context?.getString(R.string.tab_by_zone),
+            context?.getString(R.string.tab_by_heatmap)
         )
     }
 
@@ -30,8 +31,9 @@ class RankingTabsFragment : Fragment() {
         val view = binding.root
 
         val fragments = listOf(
-            RankingFragment(),        // Ranking global por usuario
-            RankingZonaFragment()     // Ranking por zona/ciudad
+            RankingFragment(),
+            RankingZonaFragment(),
+            HeatmapFragment()
         )
 
         val adapter = object : FragmentStateAdapter(this) {
@@ -40,6 +42,7 @@ class RankingTabsFragment : Fragment() {
         }
 
         binding.viewPager.adapter = adapter
+        binding.viewPager.isUserInputEnabled = false
 
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = tabTitles[position]

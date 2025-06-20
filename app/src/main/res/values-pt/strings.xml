@@ -82,6 +82,7 @@
     <string name="top_zones">PRINCIPAIS ZONAS</string>
     <string name="tab_global">Global</string>
     <string name="tab_by_zone">Por zona</string>
+    <string name="tab_by_heatmap">Mapa de calor</string>
     <string name="error_loading_points">Erro ao carregar os pontos</string>
     <string name="error_name_required">Por favor, insira seu nome completo</string>
     <string name="error_email_required">Por favor, insira seu e-mail</string>
@@ -117,4 +118,18 @@
     <string name="notifications_settings">Configurações de notificação</string>
     <string name="enable_local_notifications">Ativar lembrete de desafio (12h antes)</string>
     <string name="enable_firebase_notifications">Ativar notificações de novidades e atualizações</string>
+    <string name="download_pdf">Baixar relatório</string>
+    <string name="report_start_date">Data de início: %1$s</string>
+    <string name="report_end_date">Data de término: %1$s</string>
+    <string name="report_tasks">Tarefas</string>
+    <string name="report_task_status_completed">✔ Concluída</string>
+    <string name="report_task_status_pending">Pendente</string>
+    <string name="report_task_points_and_status">Pontos: %1$d   |   Status: %2$s</string>
+    <string name="report_task_comment">Comentário: %1$s</string>
+    <string name="report_task_no_comment">-</string>
+    <string name="report_task_location">Localização: %1$s</string>
+    <string name="report_pdf_saved">PDF salvo em Downloads</string>
+    <string name="report_pdf_error">Erro ao salvar ou abrir o PDF: %1$s</string>
+    <string name="report_open_with">Abrir PDF com</string>
+    <string name="report_task_no_photo">Sem imagem</string>
 </resources>

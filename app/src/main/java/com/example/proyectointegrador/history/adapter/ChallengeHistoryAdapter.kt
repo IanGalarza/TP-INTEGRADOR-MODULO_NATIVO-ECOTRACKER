@@ -12,7 +12,8 @@ import com.google.android.material.card.MaterialCardView
 
 class ChallengeHistoryAdapter(
     private var challenges: List<Challenge>,
-    private val onItemClick: (Challenge) -> Unit
+    private val onItemClick: (Challenge) -> Unit,
+    private val onDownloadPdf: (Challenge) -> Unit
 ) : RecyclerView.Adapter<ChallengeHistoryAdapter.ChallengeViewHolder>() {
 
     inner class ChallengeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -24,6 +25,28 @@ class ChallengeHistoryAdapter(
                     onItemClick(challenges[position])
                 }
             }
+            itemView.setOnLongClickListener { view ->
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    showContextMenu(view, challenges[position])
+                }
+                true
+            }
+        }
+
+        private fun showContextMenu(view: View, challenge: Challenge) {
+            val popup = android.widget.PopupMenu(view.context, view)
+            popup.menuInflater.inflate(R.menu.history_context_menu, popup.menu)
+            popup.setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.action_download_pdf -> {
+                        onDownloadPdf(challenge)
+                        true
+                    }
+                    else -> false
+                }
+            }
+            popup.show()
         }
     }
 

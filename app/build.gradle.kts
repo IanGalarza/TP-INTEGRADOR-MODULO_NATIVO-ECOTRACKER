@@ -61,7 +61,8 @@ dependencies {
     implementation(libs.firebase.messaging)
     kapt("com.github.bumptech.glide:compiler:4.16.0")
     implementation("com.google.android.gms:play-services-location:21.1.0")
-
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.maps.android:android-maps-utils:3.8.0")
     implementation("androidx.work:work-runtime-ktx:2.9.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
