@@ -16,6 +16,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import android.util.Patterns
 import androidx.core.widget.doOnTextChanged
+import com.google.firebase.messaging.FirebaseMessaging
 
 
 class RegisterFragment : Fragment() {
@@ -150,6 +151,8 @@ class RegisterFragment : Fragment() {
                             .document(userId)
                             .set(userMap)
                             .addOnSuccessListener {
+                                FirebaseMessaging.getInstance().subscribeToTopic("firebase_notifications")
+
                                 Toast.makeText(requireContext(), getString(R.string.account_created), Toast.LENGTH_SHORT).show()
 
                                 findNavController().navigate(R.id.action_registerFragment_to_loginFragment)

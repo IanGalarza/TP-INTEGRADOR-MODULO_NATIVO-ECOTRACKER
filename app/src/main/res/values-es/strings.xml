@@ -114,4 +114,7 @@
     <string name="status_cancelled">Cancelados</string>
     <string name="notif_title">¡Recordatorio de desafío!</string>
     <string name="notif_message">Quedan menos de 12 horas para completar: %1$s y ganar puntos extra.</string>
+    <string name="notifications_settings">Configuración de notificaciones</string>
+    <string name="enable_local_notifications">Activar recordatorio de desafío (12h antes)</string>
+    <string name="enable_firebase_notifications">Activar notificaciones de novedades y actualizaciones</string>
 </resources>

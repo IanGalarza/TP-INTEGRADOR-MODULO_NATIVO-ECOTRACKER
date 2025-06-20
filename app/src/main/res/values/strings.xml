@@ -113,4 +113,7 @@
     <string name="status_cancelled">Cancelled</string>
     <string name="notif_title">Challenge Reminder!</string>
     <string name="notif_message">Less than 12 hours left to complete: %1$s and earn extra points!</string>
+    <string name="notifications_settings">Notification Settings</string>
+    <string name="enable_local_notifications">Enable challenge reminder (12h before)</string>
+    <string name="enable_firebase_notifications">Enable news and updates notifications</string>
 </resources>

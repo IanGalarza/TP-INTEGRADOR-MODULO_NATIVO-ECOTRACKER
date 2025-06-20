@@ -26,6 +26,14 @@ class ChallengeReminderWorker(
         val channelId = "challenge_reminder_channel"
         val context = applicationContext
 
+        // Validar si las notificaciones locales están activadas
+
+        val prefs = context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE)
+        val localNotificationsEnabled = prefs.getBoolean("local_notifications_enabled", true)
+        if (!localNotificationsEnabled) {
+            return Result.success()
+        }
+
         // Crear canal si es necesario
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
