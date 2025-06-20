@@ -40,6 +40,8 @@ import android.Manifest
 import android.content.Context
 import android.location.Geocoder
 import android.widget.ProgressBar
+import androidx.work.WorkManager
+import com.example.proyectointegrador.placeholder.PlaceholderContent.scheduleChallengeReminder
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.android.material.button.MaterialButton
@@ -229,6 +231,10 @@ class ChallengeDetailFragment : Fragment() {
                                             .update("status", "CANCELLED")
                                             .addOnSuccessListener {
                                                 Toast.makeText(requireContext(), getString(R.string.challenge_cancelled), Toast.LENGTH_SHORT).show()
+
+                                                // Cancelar notificación local al haber completado todas ya
+                                                WorkManager.getInstance(requireContext()).cancelAllWorkByTag(challengeId)
+
                                                 updateContent() // Recargar la UI
                                             }
                                             .addOnFailureListener {
@@ -256,6 +262,21 @@ class ChallengeDetailFragment : Fragment() {
                                             .update("status", "ACTIVE")
                                             .addOnSuccessListener {
                                                 Toast.makeText(requireContext(), getString(R.string.challenge_reactivated), Toast.LENGTH_SHORT).show()
+
+
+                                                // Reprogramo nuevamente la notificacion para 12h antes del cierre del desafio.
+
+                                                val title = doc.getString("title") ?: "Desafío"
+                                                val endDate = doc.getTimestamp("endDate")
+                                                if (endDate != null) {
+                                                    scheduleChallengeReminder(
+                                                        context = requireContext(),
+                                                        challengeId = challengeId,
+                                                        challengeName = title,
+                                                        endDateTimestamp = endDate
+                                                    )
+                                                }
+
                                                 updateContent() // Recargar la UI
                                             }
                                             .addOnFailureListener {
@@ -409,6 +430,11 @@ class ChallengeDetailFragment : Fragment() {
                                                                 additionalUpdates.add(
                                                                     challengeDocRef.update("status", "COMPLETED")
                                                                 )
+
+                                                                // Se cancela la notificacion local en caso de completarlo 12h antes.
+
+                                                                WorkManager.getInstance(requireContext()).cancelAllWorkByTag(challengeId)
+
                                                                 if (endDate != null && now < endDate && extraPoints > 0) {
                                                                     additionalUpdates.add(
                                                                         userDoc.update("points", FieldValue.increment(extraPoints))
@@ -638,6 +664,7 @@ class ChallengeDetailFragment : Fragment() {
         }
 
         PlaceholderContent.guardarChallengeEnUsuario(
+            context = requireContext(),
             uid = user.uid,
             challenge = item!!,
             onSuccess = {

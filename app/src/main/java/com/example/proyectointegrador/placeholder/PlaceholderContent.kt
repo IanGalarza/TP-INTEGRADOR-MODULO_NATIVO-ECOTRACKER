@@ -1,9 +1,16 @@
 package com.example.proyectointegrador.placeholder
 
+import android.content.Context
+import android.util.Log
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import com.example.proyectointegrador.worker.ChallengeReminderWorker
 import com.google.firebase.firestore.DocumentSnapshot
 import java.util.ArrayList
 import java.util.HashMap
 import com.google.firebase.firestore.FirebaseFirestore
+import java.util.concurrent.TimeUnit
 
 object PlaceholderContent {
 
@@ -52,7 +59,7 @@ object PlaceholderContent {
             }
     }
 
-    fun guardarChallengeEnUsuario(uid: String, challenge: PlaceholderItem, onSuccess: () -> Unit, onError: (Exception) -> Unit) {
+    fun guardarChallengeEnUsuario(context: Context ,uid: String, challenge: PlaceholderItem, onSuccess: () -> Unit, onError: (Exception) -> Unit) {
         val firestore = FirebaseFirestore.getInstance()
         val now = com.google.firebase.Timestamp.now()
 
@@ -94,10 +101,21 @@ object PlaceholderContent {
             .collection("active_challenges")
             .document(challenge.id)
             .set(challengeMap)
-            .addOnSuccessListener { onSuccess() }
+            .addOnSuccessListener {
+
+                // Programar recordatorio 12h antes
+                scheduleChallengeReminder(
+                    context = context,
+                    challengeId = challenge.id,
+                    challengeName = challenge.title,
+                    endDateTimestamp = endDate
+                )
+
+                onSuccess()
+
+            }
             .addOnFailureListener { onError(it) }
     }
-
 
     fun addItemFromDocument(document: DocumentSnapshot) {
         val objectivesList = (document["objectives"] as? List<Map<String, Any>>)?.map { obj ->
@@ -122,6 +140,33 @@ object PlaceholderContent {
         ITEMS.add(item)
         ITEM_MAP[item.id] = item
     }
+
+    fun scheduleChallengeReminder(context: Context, challengeId: String, challengeName: String, endDateTimestamp: com.google.firebase.Timestamp) {
+        val deadlineMillis = endDateTimestamp.toDate().time
+        val reminderTimeMillis = deadlineMillis - TimeUnit.HOURS.toMillis(12)
+        val delayMillis = reminderTimeMillis - System.currentTimeMillis()
+
+
+        if (delayMillis <= 0) {
+            // Ya paso el momento para notificar
+            return
+        }
+
+        Log.d("ChallengeReminder", "Notificación programada para challenge: $challengeName con delay: $delayMillis ms")
+
+        val inputData = Data.Builder()
+            .putString("challengeName", challengeName)
+            .build()
+
+        val workRequest = OneTimeWorkRequestBuilder<ChallengeReminderWorker>()
+            .setInitialDelay(delayMillis, TimeUnit.MILLISECONDS)
+            .setInputData(inputData)
+            .addTag(challengeId) // opcional para luego cancelar con este tag
+            .build()
+
+        WorkManager.getInstance(context).enqueue(workRequest)
+    }
+
 
     data class PlaceholderItem(
         val id: String,

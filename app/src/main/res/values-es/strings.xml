@@ -112,4 +112,6 @@
     <string name="status_active">Activos</string>
     <string name="status_completed">Completados</string>
     <string name="status_cancelled">Cancelados</string>
+    <string name="notif_title">¡Recordatorio de desafío!</string>
+    <string name="notif_message">Quedan menos de 12 horas para completar: %1$s y ganar puntos extra.</string>
 </resources>

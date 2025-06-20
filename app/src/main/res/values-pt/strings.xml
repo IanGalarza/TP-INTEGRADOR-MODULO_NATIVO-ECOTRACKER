@@ -112,4 +112,6 @@
     <string name="status_active">Ativos</string>
     <string name="status_completed">Concluidos</string>
     <string name="status_cancelled">Cancelados</string>
+    <string name="notif_title">Lembrete de desafio!</string>
+    <string name="notif_message">Faltam menos de 12 horas para concluir: %1$s e ganhar pontos extras.</string>
 </resources>

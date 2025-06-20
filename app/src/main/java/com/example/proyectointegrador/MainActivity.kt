@@ -3,6 +3,7 @@ package com.example.proyectointegrador
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -29,6 +30,11 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.example.proyectointegrador.placeholder.PlaceholderContent
 import java.util.Locale
+import android.Manifest
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import android.content.pm.PackageManager
+
 
 
 class MainActivity : BottomNavigationBaseActivity() {
@@ -98,6 +104,18 @@ class MainActivity : BottomNavigationBaseActivity() {
             loadUserData(user!!.uid)
             loadActiveChallenges(user!!.uid)
 
+        }
+
+        // Solicitar permiso para notificaciones (Android 13+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    1001
+                )
+            }
         }
     }
 
