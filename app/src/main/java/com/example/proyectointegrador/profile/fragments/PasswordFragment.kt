@@ -48,7 +48,6 @@ class PasswordFragment : Fragment() {
         val user = auth.currentUser
         if (user == null) {
             Toast.makeText(requireContext(), getString(R.string.user_not_logged_in), Toast.LENGTH_SHORT).show()
-            // Aca de ultima dirigir a la pantalla de login
             return
         }
 

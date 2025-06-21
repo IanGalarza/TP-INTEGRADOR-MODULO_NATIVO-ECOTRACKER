@@ -88,6 +88,8 @@ class LoginFragment : Fragment() {
             emailLayout.error = null
             passwordLayout.error = null
 
+            // Validaciones
+
             if (email.isEmpty()) {
                 emailLayout.error = getString(R.string.error_email_required)
                 isValid = false
@@ -102,6 +104,8 @@ class LoginFragment : Fragment() {
                 progressBar.visibility = View.GONE
                 return@setOnClickListener
             }
+
+            // Intento de logeo
 
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(requireActivity()) { task ->

@@ -58,7 +58,6 @@ class ChallengeDetailFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var userLocation: Location? = null
 
-    //lateinit var itemDetailTextView: TextView
 
     private var currentTaskIndexForPhoto: Int? = null
     private var currentPhotoTempFile: File? = null
@@ -128,7 +127,6 @@ class ChallengeDetailFragment : Fragment() {
         _binding = FragmentChallengeDetailBinding.inflate(inflater, container, false)
         val rootView = binding.root
 
-        //itemDetailTextView = binding.challengeDetail
         headerImageView = binding.headerImage!!
 
         // Carga los datos del desafio
@@ -147,6 +145,7 @@ class ChallengeDetailFragment : Fragment() {
         return rootView
     }
 
+    // Funcion que se encarga de manejar la obtencion de datos correctos en caso de aceptar un desafio, o cambios en el status
     private fun updateContent() {
 
         binding.loadingSpinner?.visibility = View.VISIBLE
@@ -526,6 +525,8 @@ class ChallengeDetailFragment : Fragment() {
         }
     }
 
+    // Mostrar dialog con las opciones de tomar una foto u obtener de la galeria
+
     private fun showPhotoSourceDialog(forTaskIndex: Int) {
         currentTaskIndexForPhoto = forTaskIndex
 
@@ -545,6 +546,8 @@ class ChallengeDetailFragment : Fragment() {
             .show()
     }
 
+    // Funcion para verificar que se tengan permisos para abrir la camara
+
     private fun checkCameraPermissionAndOpen(forTaskIndex: Int) {
         currentTaskIndexForPhoto = forTaskIndex
         when {
@@ -560,6 +563,8 @@ class ChallengeDetailFragment : Fragment() {
         }
     }
 
+    // Funcion para poder abrir la camara
+
     private fun openCamera(forTaskIndex: Int) {
         val tempFile = File.createTempFile("IMG_${UUID.randomUUID()}", ".jpg", requireContext().cacheDir)
         currentPhotoTempFile = tempFile
@@ -571,6 +576,8 @@ class ChallengeDetailFragment : Fragment() {
         takePhotoFromCamera.launch(photoUri)
     }
 
+
+    // Funcion que permite mostrar visualmente la imagen seleccionada
 
     private fun uploadPhotoAndAttachToTask(uri: Uri, fromCamera: Boolean) {
         val taskIndex = currentTaskIndexForPhoto ?: return
@@ -589,6 +596,9 @@ class ChallengeDetailFragment : Fragment() {
             addPhotoButton.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_edit)
         }
     }
+
+
+    // Funcion para subir la imagen a Cloudinary y luego obtener la URL
 
     private fun subirFotoACloudinary(uri: Uri, onResult: (String?) -> Unit) {
         val context = requireContext()
@@ -633,6 +643,8 @@ class ChallengeDetailFragment : Fragment() {
         }.start()
     }
 
+    // Funcion para obtener el nombre de la ciudad y pais segun las coordenadas
+
     fun getCityFromLatLng(context: Context, lat: Double, lng: Double, callback: (String?, String?) -> Unit) {
         Thread {
             try {
@@ -654,7 +666,7 @@ class ChallengeDetailFragment : Fragment() {
         }.start()
     }
 
-
+    // Funcion que permite aceptar el challenge
 
     private fun guardarChallengeEnFirebase() {
         val user = FirebaseAuth.getInstance().currentUser
@@ -687,6 +699,8 @@ class ChallengeDetailFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    // Funcion que se encarga de solicitar la ubicacion al usuario
 
     private fun solicitarUbicacion() {
         if (ActivityCompat.checkSelfPermission(

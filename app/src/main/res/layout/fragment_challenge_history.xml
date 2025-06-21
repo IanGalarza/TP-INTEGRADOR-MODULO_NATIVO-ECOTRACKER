@@ -33,7 +33,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Contenedor búsqueda + filtro -->
+    <!-- Contenedor busquedas con filtros -->
     <LinearLayout
         android:id="@+id/filter_search_container"
         android:layout_width="0dp"

@@ -22,6 +22,8 @@ object PlaceholderContent {
         ITEM_MAP[item.id] = item
     }
 
+    // Funcion para cargar los desafios globales
+
     fun loadChallengesFromFirestore(onComplete: () -> Unit, onError: (Exception) -> Unit) {
         val db = FirebaseFirestore.getInstance()
         db.collection("challenges_global")
@@ -58,6 +60,8 @@ object PlaceholderContent {
                 onError(exception)
             }
     }
+
+    // Funcion para guardar el challenge en la coleccion del usuario
 
     fun guardarChallengeEnUsuario(context: Context ,uid: String, challenge: PlaceholderItem, onSuccess: () -> Unit, onError: (Exception) -> Unit) {
         val firestore = FirebaseFirestore.getInstance()
@@ -117,6 +121,8 @@ object PlaceholderContent {
             .addOnFailureListener { onError(it) }
     }
 
+    // Funcion para poder agregar challenges individuales
+
     fun addItemFromDocument(document: DocumentSnapshot) {
         val objectivesList = (document["objectives"] as? List<Map<String, Any>>)?.map { obj ->
             Objective(
@@ -141,6 +147,8 @@ object PlaceholderContent {
         ITEM_MAP[item.id] = item
     }
 
+    // Funcion para setear la notificacion 12 antes del cierre del challenge
+
     fun scheduleChallengeReminder(context: Context, challengeId: String, challengeName: String, endDateTimestamp: com.google.firebase.Timestamp) {
         val deadlineMillis = endDateTimestamp.toDate().time
         val reminderTimeMillis = deadlineMillis - TimeUnit.HOURS.toMillis(12)
@@ -161,7 +169,7 @@ object PlaceholderContent {
         val workRequest = OneTimeWorkRequestBuilder<ChallengeReminderWorker>()
             .setInitialDelay(delayMillis, TimeUnit.MILLISECONDS)
             .setInputData(inputData)
-            .addTag(challengeId) // opcional para luego cancelar con este tag
+            .addTag(challengeId)
             .build()
 
         WorkManager.getInstance(context).enqueue(workRequest)

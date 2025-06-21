@@ -60,6 +60,9 @@ class RegisterFragment : Fragment() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        // Regex para ver si la contraseña cumple con el pattern correcto
+
         val passwordRegex = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$")
 
         editTextName = view.findViewById(R.id.name)
@@ -96,6 +99,8 @@ class RegisterFragment : Fragment() {
             val confirmPassword = editTextConfirmPassword.text.toString()
 
             var isValid = true
+
+            // Validaciones
 
             if (name.isEmpty()) {
                 nameLayout.error = getString(R.string.error_name_required)

@@ -8,7 +8,7 @@
     tools:context=".ChallengeDetailHostActivity"
     tools:ignore="MergeRootFrame">
 
-    <!-- App Bar con Toolbar e imagen -->
+    <!-- Imagen superior en detalles -->
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
@@ -187,7 +187,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Contenedor de Cards individuales para cada objetivo (solo si ESTÁ aceptado) -->
+            <!-- Contenedor de Cards individuales para cada objetivo si esta aceptado el desafio -->
 
             <LinearLayout
                 android:id="@+id/accepted_objectives_container"

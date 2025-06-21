@@ -92,6 +92,8 @@ class ChallengeHistoryFragment : Fragment() {
         return rootView
     }
 
+    // Barra de busqueda con un debounce de 500ms
+
     private fun setupSearchListener() {
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -99,13 +101,15 @@ class ChallengeHistoryFragment : Fragment() {
                 searchRunnable = Runnable {
                     applyFilters()
                 }
-                handler.postDelayed(searchRunnable!!, 500) // 500ms debounce
+                handler.postDelayed(searchRunnable!!, 500)
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
     }
+
+    // Estados posibles de las tareas del usuario
 
     private fun setupStatusFilter() {
         val statusOptions = listOf(
@@ -135,6 +139,8 @@ class ChallengeHistoryFragment : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
     }
+
+    // Funcion para cargar la lista de challenges del usuario
 
     private fun loadChallengesFromFirestore() {
         val db = Firebase.firestore
@@ -241,6 +247,8 @@ class ChallengeHistoryFragment : Fragment() {
             }
     }
 
+    // Funcion para aplicar los filtros a la busqueda
+
     private fun applyFilters() {
         val query = searchEditText.text.toString().trim().lowercase()
         val selectedStatus = statusSpinner.selectedItem.toString()
@@ -271,6 +279,8 @@ class ChallengeHistoryFragment : Fragment() {
             noHistoryText.visibility = View.GONE
         }
     }
+
+    // Funcion para generar el PDF de los challenges
 
     suspend fun generateReport(context: Context, challenge: Challenge) {
         val pdfDocument = PdfDocument()
@@ -423,7 +433,7 @@ class ChallengeHistoryFragment : Fragment() {
             val cardBottom = y + cardHeight + 10f
             canvas.drawRoundRect(cardLeft, cardTop, cardRight, cardBottom, 16f, 16f, paint)
 
-            // --- Text section ---
+            // Text section
             val textStartY = y + cardPadding + 18f
             paint.textSize = 13.5f
             paint.isFakeBoldText = true
@@ -541,6 +551,8 @@ class ChallengeHistoryFragment : Fragment() {
             e.printStackTrace()
         }
     }
+
+    // Funcion para descargar la imagen para el PDF
 
     suspend fun fetchBitmapSync(url: String): Bitmap? = withContext(Dispatchers.IO) {
         try {

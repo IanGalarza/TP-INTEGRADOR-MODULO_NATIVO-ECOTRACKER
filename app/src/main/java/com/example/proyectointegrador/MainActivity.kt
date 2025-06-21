@@ -106,7 +106,7 @@ class MainActivity : BottomNavigationBaseActivity() {
 
         }
 
-        // Solicitar permiso para notificaciones (Android 13+)
+        // Solicitar permiso para notificaciones
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                 != PackageManager.PERMISSION_GRANTED) {
